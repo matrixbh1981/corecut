@@ -3,99 +3,132 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>CoreCut – Sign In</title>
-<link rel="stylesheet" href="../style.css"/>
+<title>CoreCut - Sign In</title>
 <style>
-  body{min-height:100vh;display:flex;align-items:center;justify-content:center}
-  .card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px 36px;width:100%;max-width:400px}
-  .logo{font-size:26px;font-weight:800;background:linear-gradient(135deg,#7c3aed,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
-  h1{font-size:22px;font-weight:700;margin-bottom:24px}
-  .tabs{display:flex;background:var(--surface2);border-radius:10px;padding:4px;margin-bottom:24px}
-  .tab{flex:1;padding:8px;border-radius:8px;font-size:14px;font-weight:600;color:var(--muted);transition:.2s;text-align:center;cursor:pointer}
-  .tab.active{background:var(--accent);color:#fff}
-  .form{display:flex;flex-direction:column;gap:14px}
-  label{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px}
-  .btn{background:linear-gradient(135deg,#7c3aed,#06b6d4);color:#fff;padding:13px;border-radius:10px;font-size:15px;font-weight:700;width:100%;margin-top:4px;transition:.2s}
-  .btn:disabled{opacity:.6;cursor:not-allowed}
-  .msg{padding:10px 14px;border-radius:8px;font-size:13px;font-weight:500;margin-top:8px}
-  .msg.ok{background:#14532d;color:#86efac;border:1px solid #22c55e}
-  .msg.err{background:#450a0a;color:#fca5a5;border:1px solid #ef4444}
+:root{--bg:#0a0a0f;--surface:#111118;--surface2:#1a1a24;--border:#2a2a3a;--text:#f0f0f8;--muted:#8888aa;--accent:#7c3aed}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px 36px;width:100%;max-width:400px}
+.logo{font-size:26px;font-weight:800;color:#7c3aed;margin-bottom:8px}
+h1{font-size:22px;font-weight:700;margin-bottom:24px}
+.tabs{display:flex;background:var(--surface2);border-radius:10px;padding:4px;margin-bottom:24px;gap:4px}
+.tab{flex:1;padding:9px;border-radius:8px;font-size:14px;font-weight:600;color:var(--muted);text-align:center;cursor:pointer;border:none;background:none}
+.tab.active{background:var(--accent);color:#fff}
+.field{margin-bottom:14px}
+.field label{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:5px}
+.field input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:11px 12px;font-size:14px;color:var(--text);outline:none;font-family:sans-serif}
+.field input:focus{border-color:var(--accent)}
+.btn{background:#7c3aed;color:#fff;padding:13px;border-radius:10px;font-size:15px;font-weight:700;width:100%;margin-top:6px;border:none;cursor:pointer;font-family:sans-serif}
+.btn:hover{background:#6d28d9}
+.btn:disabled{opacity:0.6;cursor:not-allowed}
+.msg{padding:10px 14px;border-radius:8px;font-size:13px;font-weight:500;margin-top:12px;display:none}
+.msg.ok{background:#14532d;color:#86efac;border:1px solid #22c55e}
+.msg.err{background:#450a0a;color:#fca5a5;border:1px solid #ef4444}
 </style>
 </head>
 <body>
 <div class="card">
-  <div class="logo">CoreCut ✂</div>
+  <div class="logo">CoreCut</div>
   <h1 id="title">Welcome back</h1>
   <div class="tabs">
-    <div class="tab active" id="tab-login" onclick="switchTab('login')">Sign In</div>
-    <div class="tab" id="tab-register" onclick="switchTab('register')">Register</div>
+    <button class="tab active" id="tab-login" onclick="switchTab('login')">Sign In</button>
+    <button class="tab" id="tab-register" onclick="switchTab('register')">Register</button>
   </div>
-  <div class="form" id="form">
-    <div id="name-field" style="display:none">
-      <label>Full Name</label>
-      <input type="text" id="name" placeholder="Your name"/>
-    </div>
-    <div>
-      <label>Email</label>
-      <input type="email" id="email" placeholder="you@example.com"/>
-    </div>
-    <div>
-      <label>Password</label>
-      <input type="password" id="password" placeholder="••••••••"/>
-    </div>
-    <button class="btn" id="submit-btn" onclick="submit()">Sign In</button>
+  <div id="name-field" class="field" style="display:none">
+    <label>Full Name</label>
+    <input type="text" id="inp-name" placeholder="Your name"/>
   </div>
-  <div id="msg" style="display:none" class="msg"></div>
+  <div class="field">
+    <label>Email</label>
+    <input type="email" id="inp-email" placeholder="you@example.com"/>
+  </div>
+  <div class="field">
+    <label>Password</label>
+    <input type="text" id="inp-pw" placeholder="Enter your password" style="-webkit-text-security:disc"/>
+  </div>
+  <button class="btn" id="main-btn" onclick="handleAuth()">Sign In</button>
+  <div class="msg" id="msg"></div>
 </div>
+
 <script>
-const API = 'https://matrixbh.app.n8n.cloud/webhook';
-let mode = 'login';
+var API = 'https://matrixbh.app.n8n.cloud/webhook';
+var mode = 'login';
 
 function switchTab(t) {
   mode = t;
-  document.getElementById('tab-login').classList.toggle('active', t==='login');
-  document.getElementById('tab-register').classList.toggle('active', t==='register');
-  document.getElementById('name-field').style.display = t==='register' ? 'block' : 'none';
-  document.getElementById('title').textContent = t==='login' ? 'Welcome back' : 'Create account';
-  document.getElementById('submit-btn').textContent = t==='login' ? 'Sign In' : 'Create Account';
-  hideMsg();
+  document.getElementById('tab-login').className = (t === 'login') ? 'tab active' : 'tab';
+  document.getElementById('tab-register').className = (t === 'register') ? 'tab active' : 'tab';
+  document.getElementById('name-field').style.display = (t === 'register') ? 'block' : 'none';
+  document.getElementById('title').textContent = (t === 'login') ? 'Welcome back' : 'Create account';
+  document.getElementById('main-btn').textContent = (t === 'login') ? 'Sign In' : 'Create Account';
+  document.getElementById('msg').style.display = 'none';
 }
 
 function showMsg(text, ok) {
-  const el = document.getElementById('msg');
+  var el = document.getElementById('msg');
   el.textContent = text;
-  el.className = 'msg ' + (ok ? 'ok' : 'err');
+  el.className = ok ? 'msg ok' : 'msg err';
   el.style.display = 'block';
 }
-function hideMsg() { document.getElementById('msg').style.display = 'none'; }
 
-async function submit() {
-  const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value;
-  const name = document.getElementById('name').value.trim();
-  if (!email || !password) { showMsg('Email and password required', false); return; }
-  const btn = document.getElementById('submit-btn');
+function handleAuth() {
+  var email = document.getElementById('inp-email').value.trim();
+  var pw = document.getElementById('inp-pw').value;
+  var name = document.getElementById('inp-name').value.trim();
+
+  if (!email || !pw) {
+    showMsg('Email and password are required', false);
+    return;
+  }
+
+  var btn = document.getElementById('main-btn');
   btn.disabled = true;
-  btn.textContent = 'Please wait…';
-  try {
-    const url = mode === 'login' ? API+'/app-login' : API+'/app-register';
-    const body = mode === 'login' ? {email, password} : {email, password, name};
-    const res = await fetch(url, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
-    const data = await res.json();
-    if (res.ok && data.user_id) {
-      localStorage.setItem('userId', data.user_id);
-      localStorage.setItem('userName', data.name || data.email);
-      showMsg(mode==='login' ? 'Welcome back!' : 'Account created!', true);
-      setTimeout(() => window.location.href='../projects/', 800);
-    } else {
-      showMsg(data.error || data.message || 'Something went wrong', false);
+  btn.textContent = 'Please wait...';
+
+  var url = (mode === 'login') ? API + '/app-login' : API + '/app-register';
+  var payload = (mode === 'login')
+    ? JSON.stringify({ email: email, password: pw })
+    : JSON.stringify({ email: email, password: pw, name: name });
+
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', url, true);
+  xhr.setRequestHeader('Content-Type', 'application/json');
+
+  xhr.onload = function() {
+    btn.disabled = false;
+    btn.textContent = (mode === 'login') ? 'Sign In' : 'Create Account';
+    try {
+      var data = JSON.parse(xhr.responseText);
+      var uid = data.user_id || data.userId;
+      if (xhr.status >= 200 && xhr.status < 300 && uid) {
+        localStorage.setItem('userId', uid);
+        localStorage.setItem('userName', data.name || email);
+        showMsg((mode === 'login') ? 'Welcome back!' : 'Account created!', true);
+        setTimeout(function() { window.location.href = '../projects/'; }, 900);
+      } else {
+        showMsg(data.error || data.message || 'Something went wrong', false);
+      }
+    } catch(e) {
+      showMsg('Error reading response', false);
     }
-  } catch(e) { showMsg('Network error: '+e.message, false); }
-  finally { btn.disabled = false; btn.textContent = mode==='login' ? 'Sign In' : 'Create Account'; }
+  };
+
+  xhr.onerror = function() {
+    btn.disabled = false;
+    btn.textContent = (mode === 'login') ? 'Sign In' : 'Create Account';
+    showMsg('Network error - check your connection', false);
+  };
+
+  xhr.send(payload);
 }
 
-document.addEventListener('keydown', e => { if(e.key==='Enter') submit(); });
-if(localStorage.getItem('userId')) window.location.href='../projects/';
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') handleAuth();
+});
+
+if (localStorage.getItem('userId')) {
+  window.location.href = '../projects/';
+}
 </script>
 </body>
 </html>

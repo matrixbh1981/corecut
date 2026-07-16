@@ -3,41 +3,33 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>CoreCut – AI Video Editor</title>
-<link rel="stylesheet" href="../style.css"/>
+<title>CoreCut - AI Video Editor</title>
 <style>
-  body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg)}
-  .hero{text-align:center;max-width:480px;padding:40px 24px}
-  .logo{font-size:38px;font-weight:800;background:linear-gradient(135deg,#7c3aed,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:10px}
-  .tagline{font-size:17px;color:var(--muted);margin-bottom:36px;line-height:1.6}
-  .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-  .btn-primary{background:linear-gradient(135deg,#7c3aed,#06b6d4);color:#fff;padding:14px 32px;border-radius:12px;font-size:16px;font-weight:700;text-decoration:none;transition:.2s}
-  .btn-secondary{background:var(--surface);color:var(--text);padding:14px 32px;border-radius:12px;font-size:16px;font-weight:600;text-decoration:none;border:1px solid var(--border)}
-  .features{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:40px;text-align:left}
-  .feat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;font-size:13px;color:var(--muted)}
-  .feat b{display:block;color:var(--text);font-size:14px;margin-bottom:4px}
+:root{--bg:#0a0a0f;--surface:#111118;--surface2:#1a1a24;--border:#2a2a3a;--text:#f0f0f8;--muted:#8888aa;--accent:#7c3aed}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center}
+.hero{text-align:center;max-width:500px;padding:40px 24px}
+.logo{font-size:42px;font-weight:800;color:#7c3aed;margin-bottom:10px}
+.tagline{font-size:17px;color:var(--muted);margin-bottom:36px;line-height:1.6}
+.btn{display:inline-block;background:#7c3aed;color:#fff;padding:16px 40px;border-radius:12px;font-size:17px;font-weight:700;text-decoration:none;border:none;cursor:pointer}
+.features{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:40px;text-align:left}
+.feat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;font-size:13px;color:var(--muted)}
+.feat b{display:block;color:var(--text);font-size:14px;margin-bottom:4px}
 </style>
 </head>
 <body>
 <div class="hero">
-  <div class="logo">CoreCut ✂</div>
-  <p class="tagline">AI-powered video editing.<br>Captions, voiceover, background removal &amp; more.</p>
-  <div class="cta">
-    <a href="login/" class="btn-primary">Get Started</a>
-    <a href="login/" class="btn-secondary">Sign In</a>
-  </div>
+  <div class="logo">CoreCut</div>
+  <p class="tagline">AI-powered video editing.<br>Captions, voiceover, background removal and more.</p>
+  <a href="projects/" class="btn">Get Started</a>
   <div class="features">
-    <div class="feat"><b>🎙 AI Captions</b>Auto-generated subtitles via Whisper</div>
-    <div class="feat"><b>✂ Background Removal</b>One-click AI cutout</div>
-    <div class="feat"><b>🎨 Video Stylization</b>Anime, 3D &amp; Neon effects</div>
-    <div class="feat"><b>🗣 Text to Speech</b>6 AI voices, instant MP3</div>
-    <div class="feat"><b>🎵 Audio Library</b>Browse &amp; add music/SFX</div>
-    <div class="feat"><b>⬆ HD Export</b>Render &amp; download via Shotstack</div>
+    <div class="feat"><b>AI Captions</b>Auto-generated subtitles via Whisper</div>
+    <div class="feat"><b>Background Removal</b>One-click AI cutout</div>
+    <div class="feat"><b>Video Stylization</b>Anime, 3D and Neon effects</div>
+    <div class="feat"><b>Text to Speech</b>6 AI voices, instant MP3</div>
+    <div class="feat"><b>Audio Library</b>Browse and add music/SFX</div>
+    <div class="feat"><b>HD Export</b>Render and download via Shotstack</div>
   </div>
 </div>
-<script>
-  // Redirect logged-in users to projects
-  if(localStorage.getItem('userId')) window.location.href='projects/';
-</script>
 </body>
 </html>
