@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>CoreCut – Sign In</title>
+<link rel="stylesheet" href="../style.css"/>
+<style>
+  body{min-height:100vh;display:flex;align-items:center;justify-content:center}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px 36px;width:100%;max-width:400px}
+  .logo{font-size:26px;font-weight:800;background:linear-gradient(135deg,#7c3aed,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+  h1{font-size:22px;font-weight:700;margin-bottom:24px}
+  .tabs{display:flex;background:var(--surface2);border-radius:10px;padding:4px;margin-bottom:24px}
+  .tab{flex:1;padding:8px;border-radius:8px;font-size:14px;font-weight:600;color:var(--muted);transition:.2s;text-align:center;cursor:pointer}
+  .tab.active{background:var(--accent);color:#fff}
+  .form{display:flex;flex-direction:column;gap:14px}
+  label{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px}
+  .btn{background:linear-gradient(135deg,#7c3aed,#06b6d4);color:#fff;padding:13px;border-radius:10px;font-size:15px;font-weight:700;width:100%;margin-top:4px;transition:.2s}
+  .btn:disabled{opacity:.6;cursor:not-allowed}
+  .msg{padding:10px 14px;border-radius:8px;font-size:13px;font-weight:500;margin-top:8px}
+  .msg.ok{background:#14532d;color:#86efac;border:1px solid #22c55e}
+  .msg.err{background:#450a0a;color:#fca5a5;border:1px solid #ef4444}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">CoreCut ✂</div>
+  <h1 id="title">Welcome back</h1>
+  <div class="tabs">
+    <div class="tab active" id="tab-login" onclick="switchTab('login')">Sign In</div>
+    <div class="tab" id="tab-register" onclick="switchTab('register')">Register</div>
+  </div>
+  <div class="form" id="form">
+    <div id="name-field" style="display:none">
+      <label>Full Name</label>
+      <input type="text" id="name" placeholder="Your name"/>
+    </div>
+    <div>
+      <label>Email</label>
+      <input type="email" id="email" placeholder="you@example.com"/>
+    </div>
+    <div>
+      <label>Password</label>
+      <input type="password" id="password" placeholder="••••••••"/>
+    </div>
+    <button class="btn" id="submit-btn" onclick="submit()">Sign In</button>
+  </div>
+  <div id="msg" style="display:none" class="msg"></div>
+</div>
+<script>
+const API = 'https://matrixbh.app.n8n.cloud/webhook';
+let mode = 'login';
+
+function switchTab(t) {
+  mode = t;
+  document.getElementById('tab-login').classList.toggle('active', t==='login');
+  document.getElementById('tab-register').classList.toggle('active', t==='register');
+  document.getElementById('name-field').style.display = t==='register' ? 'block' : 'none';
+  document.getElementById('title').textContent = t==='login' ? 'Welcome back' : 'Create account';
+  document.getElementById('submit-btn').textContent = t==='login' ? 'Sign In' : 'Create Account';
+  hideMsg();
+}
+
+function showMsg(text, ok) {
+  const el = document.getElementById('msg');
+  el.textContent = text;
+  el.className = 'msg ' + (ok ? 'ok' : 'err');
+  el.style.display = 'block';
+}
+function hideMsg() { document.getElementById('msg').style.display = 'none'; }
+
+async function submit() {
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const name = document.getElementById('name').value.trim();
+  if (!email || !password) { showMsg('Email and password required', false); return; }
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Please wait…';
+  try {
+    const url = mode === 'login' ? API+'/app-login' : API+'/app-register';
+    const body = mode === 'login' ? {email, password} : {email, password, name};
+    const res = await fetch(url, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
+    const data = await res.json();
+    if (res.ok && data.user_id) {
+      localStorage.setItem('userId', data.user_id);
+      localStorage.setItem('userName', data.name || data.email);
+      showMsg(mode==='login' ? 'Welcome back!' : 'Account created!', true);
+      setTimeout(() => window.location.href='../projects/', 800);
+    } else {
+      showMsg(data.error || data.message || 'Something went wrong', false);
+    }
+  } catch(e) { showMsg('Network error: '+e.message, false); }
+  finally { btn.disabled = false; btn.textContent = mode==='login' ? 'Sign In' : 'Create Account'; }
+}
+
+document.addEventListener('keydown', e => { if(e.key==='Enter') submit(); });
+if(localStorage.getItem('userId')) window.location.href='../projects/';
+</script>
+</body>
+</html>

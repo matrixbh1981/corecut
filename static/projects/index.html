@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>CoreCut – Projects</title>
+<link rel="stylesheet" href="../style.css"/>
+<style>
+  .header{display:flex;align-items:center;gap:14px;padding:0 20px;height:56px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:20}
+  .logo{font-size:20px;font-weight:800;background:linear-gradient(135deg,#7c3aed,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .header-right{display:flex;align-items:center;gap:10px;margin-left:auto}
+  .user-name{font-size:13px;color:var(--muted)}
+  .btn-logout{background:var(--surface2);color:var(--muted);border:1px solid var(--border);padding:6px 12px;border-radius:8px;font-size:12px}
+  .main{max-width:900px;margin:0 auto;padding:32px 20px}
+  h1{font-size:24px;font-weight:700;margin-bottom:4px}
+  .subtitle{font-size:14px;color:var(--muted);margin-bottom:28px}
+  .new-project{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:28px;display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}
+  .new-project label{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px}
+  .new-project input{width:260px}
+  .new-project select{width:160px}
+  .btn-new{background:linear-gradient(135deg,#7c3aed,#06b6d4);color:#fff;padding:10px 20px;border-radius:9px;font-size:14px;font-weight:600;white-space:nowrap}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px;cursor:pointer;transition:.15s;position:relative}
+  .card:hover{border-color:var(--accent);transform:translateY(-2px)}
+  .card-title{font-size:15px;font-weight:600;margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .card-date{font-size:12px;color:var(--muted);margin-bottom:10px}
+  .badge{display:inline-block;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;text-transform:uppercase}
+  .thumb{width:100%;aspect-ratio:16/9;background:#000;border-radius:8px;overflow:hidden;margin-bottom:12px;display:flex;align-items:center;justify-content:center}
+  .thumb video{width:100%;height:100%;object-fit:cover}
+  .thumb-placeholder{color:var(--muted);font-size:28px}
+  .empty{text-align:center;padding:60px 20px;color:var(--muted)}
+  .empty-icon{font-size:48px;margin-bottom:12px}
+  .loading{text-align:center;padding:60px;color:var(--muted)}
+  .upload-row{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap}
+  .btn-upload{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:8px 14px;border-radius:8px;font-size:13px;font-weight:500}
+  .msg{position:fixed;top:68px;left:50%;transform:translateX(-50%);padding:10px 22px;border-radius:10px;font-size:14px;font-weight:500;z-index:100;box-shadow:0 4px 24px rgba(0,0,0,.4);display:none}
+  .msg.ok{background:#14532d;color:#86efac;border:1px solid #22c55e}
+  .msg.err{background:#450a0a;color:#fca5a5;border:1px solid #ef4444}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="logo">CoreCut ✂</div>
+  <div class="header-right">
+    <span class="user-name" id="user-name"></span>
+    <button class="btn-logout" onclick="logout()">Sign Out</button>
+  </div>
+</div>
+<div class="main">
+  <h1>My Projects</h1>
+  <p class="subtitle">Create or open a project to start editing</p>
+
+  <div class="new-project">
+    <div>
+      <label>Project Title</label>
+      <input type="text" id="new-title" placeholder="My awesome video"/>
+    </div>
+    <button class="btn-new" onclick="createProject()">+ New Project</button>
+  </div>
+
+  <div id="projects-grid" class="grid"><div class="loading">Loading projects…</div></div>
+</div>
+<div id="msg" class="msg"></div>
+
+<script>
+const API = 'https://matrixbh.app.n8n.cloud/webhook';
+let userId = localStorage.getItem('userId');
+if (!userId) window.location.href = '../login/';
+
+document.getElementById('user-name').textContent = localStorage.getItem('userName') || '';
+
+function showMsg(text, ok) {
+  const el = document.getElementById('msg');
+  el.textContent = text;
+  el.className = 'msg ' + (ok ? 'ok' : 'err');
+  el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 3500);
+}
+
+function logout() { localStorage.clear(); window.location.href = '../login/'; }
+
+const statusColors = { done:'#14532d', processing:'#451a03', error:'#450a0a', uploaded:'#1e3a5f', rendered:'#14532d' };
+const statusText = { done:'#4ade80', processing:'#fbbf24', error:'#f87171', uploaded:'#60a5fa', rendered:'#4ade80' };
+
+async function loadProjects() {
+  try {
+    const res = await fetch(API+'/app-projects?userId='+userId);
+    const data = await res.json();
+    const projects = data.projects || [];
+    const grid = document.getElementById('projects-grid');
+    if (projects.length === 0) {
+      grid.innerHTML = '<div class="empty"><div class="empty-icon">🎬</div><p>No projects yet.<br>Create your first project above.</p></div>';
+      return;
+    }
+    grid.innerHTML = projects.map(p => `
+      <div class="card" onclick="window.location.href='../editor/?projectId=${p.project_id}'">
+        <div class="thumb">${p.video_url ? `<video src="${p.video_url}" muted></video>` : '<span class="thumb-placeholder">🎬</span>'}</div>
+        <div class="card-title">${p.title || 'Untitled'}</div>
+        <div class="card-date">${p.created_at ? new Date(p.created_at).toLocaleDateString() : ''}</div>
+        <span class="badge" style="background:${statusColors[p.status]||'#333'};color:${statusText[p.status]||'#888'}">${p.status}</span>
+      </div>
+    `).join('');
+  } catch(e) { document.getElementById('projects-grid').innerHTML = '<div class="empty">Failed to load projects.</div>'; }
+}
+
+async function createProject() {
+  const title = document.getElementById('new-title').value.trim();
+  if (!title) { showMsg('Enter a project title', false); return; }
+  try {
+    // Create a project by uploading a placeholder via upload endpoint
+    // We just store a minimal record in projects table
+    const res = await fetch(API+'/app-upload', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ userId, fileName: title+'.mp4', fileType:'video/mp4', fileData:'', title })
+    });
+    const data = await res.json();
+    if (data.project_id) {
+      showMsg('Project created!', true);
+      document.getElementById('new-title').value = '';
+      setTimeout(loadProjects, 800);
+    } else { showMsg(data.error || 'Failed to create project', false); }
+  } catch(e) { showMsg('Network error', false); }
+}
+
+loadProjects();
+</script>
+</body>
+</html>

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>CoreCut – Editor</title>
+<link rel="stylesheet" href="../style.css"/>
+<style>
+  body{display:flex;flex-direction:column;min-height:100vh;overflow:hidden}
+  .header{display:flex;align-items:center;gap:14px;padding:0 20px;height:56px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0}
+  .back{background:none;color:var(--muted);font-size:14px;padding:6px 10px;border-radius:8px}
+  .project-title{flex:1;font-size:15px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;text-transform:uppercase}
+  .btn-download{background:#22c55e;color:#fff;font-size:13px;font-weight:600;padding:7px 16px;border-radius:8px;text-decoration:none}
+  .workspace{flex:1;display:flex;overflow:hidden}
+  .preview{flex:1;padding:24px;overflow-y:auto;display:flex;flex-direction:column;gap:16px}
+  .video-box{background:#000;border-radius:12px;overflow:hidden;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center}
+  .video-box video{width:100%;height:100%;object-fit:contain}
+  .video-placeholder{color:var(--muted);font-size:18px;text-align:center}
+  .upload-area{background:var(--surface);border:2px dashed var(--border);border-radius:12px;padding:28px;text-align:center;cursor:pointer;transition:.2s}
+  .upload-area:hover{border-color:var(--accent)}
+  .upload-area input{display:none}
+  .upload-area p{color:var(--muted);font-size:14px;margin-top:8px}
+  .result-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+  .result-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+  .sidebar{width:300px;min-width:260px;border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+  .tool-list{display:flex;flex-direction:column;gap:2px;padding:10px 8px;background:var(--surface);border-bottom:1px solid var(--border)}
+  .tool-btn{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;font-size:13px;font-weight:500;text-align:left;color:var(--muted);transition:.15s}
+  .tool-btn.active{background:rgba(124,58,237,.15);color:var(--accent)}
+  .tool-btn:hover:not(.active){background:var(--surface2)}
+  .tool-icon{font-size:16px;width:22px;text-align:center}
+  .panel{flex:1;padding:20px 16px;overflow-y:auto;display:flex;flex-direction:column;gap:12px}
+  .panel h2{font-size:16px;font-weight:700}
+  .panel label{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px}
+  .btn-action{background:linear-gradient(135deg,#7c3aed,#06b6d4);color:#fff;padding:11px;border-radius:9px;font-size:14px;font-weight:600;width:100%;transition:.2s}
+  .btn-action:disabled{opacity:.6;cursor:not-allowed}
+  .style-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .style-opt{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 6px;font-size:13px;font-weight:500;color:var(--muted);transition:.15s}
+  .style-opt.active{background:rgba(124,58,237,.2);border-color:var(--accent);color:var(--text)}
+  .audio-list{display:flex;flex-direction:column;gap:8px;max-height:340px;overflow-y:auto}
+  .audio-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px}
+  .audio-name{font-size:13px;font-weight:600}
+  .audio-meta{font-size:12px;color:var(--muted);margin-top:2px}
+  .msg{position:fixed;top:68px;left:50%;transform:translateX(-50%);padding:10px 22px;border-radius:10px;font-size:14px;font-weight:500;z-index:100;box-shadow:0 4px 24px rgba(0,0,0,.4);display:none}
+  .msg.ok{background:#14532d;color:#86efac;border:1px solid #22c55e}
+  .msg.err{background:#450a0a;color:#fca5a5;border:1px solid #ef4444}
+  @media(max-width:680px){.sidebar{display:none}}
+</style>
+</head>
+<body>
+<div class="header">
+  <button class="back" onclick="window.location.href='../projects/'">← Projects</button>
+  <span class="project-title" id="proj-title">Loading…</span>
+  <span class="badge" id="proj-status" style="background:#1e3a5f;color:#60a5fa">uploaded</span>
+  <a class="btn-download" id="btn-download" style="display:none" href="#" target="_blank">⬇ Download</a>
+</div>
+<div id="msg" class="msg"></div>
+<div class="workspace">
+  <div class="preview">
+    <div class="video-box" id="video-box">
+      <div class="video-placeholder">🎬<br><span style="font-size:14px;margin-top:8px;display:block">No video yet</span></div>
+    </div>
+    <!-- Upload -->
+    <div class="upload-area" id="upload-area" onclick="document.getElementById('file-input').click()">
+      <input type="file" id="file-input" accept="video/*,image/*" onchange="uploadFile(this)"/>
+      <div style="font-size:32px">☁</div>
+      <p>Click to upload a video or image</p>
+    </div>
+    <div id="results"></div>
+  </div>
+  <div class="sidebar">
+    <div class="tool-list">
+      <button class="tool-btn" id="t-captions" onclick="openPanel('captions')"><span class="tool-icon">CC</span>Auto Captions</button>
+      <button class="tool-btn" id="t-tts" onclick="openPanel('tts')"><span class="tool-icon">🎙</span>Text to Speech</button>
+      <button class="tool-btn" id="t-bg" onclick="openPanel('bg')"><span class="tool-icon">✂</span>Remove Background</button>
+      <button class="tool-btn" id="t-style" onclick="openPanel('style')"><span class="tool-icon">🎨</span>Stylize Video</button>
+      <button class="tool-btn" id="t-audio" onclick="openPanel('audio')"><span class="tool-icon">♪</span>Audio Library</button>
+      <button class="tool-btn" id="t-render" onclick="openPanel('render')"><span class="tool-icon">⬆</span>Export & Render</button>
+    </div>
+    <div class="panel" id="panel" style="display:none"></div>
+  </div>
+</div>
+<script>
+const API = 'https://matrixbh.app.n8n.cloud/webhook';
+const params = new URLSearchParams(location.search);
+const projectId = params.get('projectId');
+const userId = localStorage.getItem('userId');
+if (!userId) window.location.href = '../login/';
+if (!projectId) window.location.href = '../projects/';
+
+let project = null;
+let activePanel = null;
+let busy = false;
+let audioTracks = [];
+let style = 'anime';
+let lang = 'en';
+let voice = 'nova';
+
+const statusColors = { done:'#14532d',processing:'#451a03',error:'#450a0a',uploaded:'#1e3a5f',rendered:'#14532d' };
+const statusText = { done:'#4ade80',processing:'#fbbf24',error:'#f87171',uploaded:'#60a5fa',rendered:'#4ade80' };
+
+function showMsg(text, ok=true) {
+  const el = document.getElementById('msg');
+  el.textContent = text;
+  el.className = 'msg '+(ok?'ok':'err');
+  el.style.display = 'block';
+  setTimeout(()=>el.style.display='none',4000);
+}
+
+function renderProject() {
+  if (!project) return;
+  document.getElementById('proj-title').textContent = project.title || 'Untitled';
+  const badge = document.getElementById('proj-status');
+  badge.textContent = project.status;
+  badge.style.background = statusColors[project.status]||'#333';
+  badge.style.color = statusText[project.status]||'#888';
+  const dl = document.getElementById('btn-download');
+  if (project.render_url) { dl.href = project.render_url; dl.style.display=''; }
+  // Video preview
+  const box = document.getElementById('video-box');
+  const src = project.render_url || project.stylized_video_url || project.video_url;
+  if (src) box.innerHTML = `<video src="${src}" controls style="width:100%;height:100%;object-fit:contain"></video>`;
+  // Results
+  let html = '';
+  if (project.captions) html += `<div class="result-card"><div class="result-label">Captions</div><pre style="font-size:12px;color:var(--muted);white-space:pre-wrap;max-height:120px;overflow-y:auto">${project.captions.slice(0,200)}…</pre></div>`;
+  if (project.tts_audio_url) html += `<div class="result-card"><div class="result-label">Voiceover</div><audio src="${project.tts_audio_url}" controls style="width:100%;height:36px"></audio></div>`;
+  if (project.no_bg_image_url) html += `<div class="result-card"><div class="result-label">Background Removed</div><img src="${project.no_bg_image_url}" style="max-height:120px;border-radius:6px"></div>`;
+  document.getElementById('results').innerHTML = html;
+}
+
+async function loadProject() {
+  try {
+    const res = await fetch(API+'/app-project-detail?projectId='+projectId);
+    const data = await res.json();
+    project = data.project || data;
+    renderProject();
+  } catch(e) { showMsg('Failed to load project', false); }
+}
+
+async function uploadFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  showMsg('Uploading…', true);
+  const reader = new FileReader();
+  reader.onload = async e => {
+    const base64 = e.target.result.split(',')[1];
+    try {
+      const res = await fetch(API+'/app-upload', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ userId, projectId, fileName: file.name, fileType: file.type, fileData: base64 })
+      });
+      const data = await res.json();
+      if (data.video_url || data.file_url) { showMsg('Uploaded!', true); loadProject(); }
+      else showMsg(data.error||'Upload failed', false);
+    } catch(e) { showMsg('Upload error: '+e.message, false); }
+  };
+  reader.readAsDataURL(file);
+}
+
+function openPanel(name) {
+  activePanel = activePanel===name ? null : name;
+  document.querySelectorAll('.tool-btn').forEach(b=>b.classList.remove('active'));
+  const panel = document.getElementById('panel');
+  if (!activePanel) { panel.style.display='none'; return; }
+  document.getElementById('t-'+name).classList.add('active');
+  panel.style.display='flex';
+  renderPanel();
+}
+
+function renderPanel() {
+  const p = document.getElementById('panel');
+  if (!activePanel) return;
+  const panels = {
+    captions: `
+      <h2>Auto Captions</h2>
+      <label>Language</label>
+      <select id="lang" onchange="lang=this.value">
+        <option value="en">English</option><option value="ar">Arabic</option>
+        <option value="fr">French</option><option value="es">Spanish</option><option value="de">German</option>
+      </select>
+      <button class="btn-action" id="act-btn" onclick="runAction('captions')">Generate Captions</button>
+      ${project?.captions?`<pre style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:12px;color:var(--muted);white-space:pre-wrap;max-height:180px;overflow-y:auto">${project.captions}</pre>`:''}
+    `,
+    tts: `
+      <h2>Text to Speech</h2>
+      <label>Script</label>
+      <textarea id="tts-text" rows="5" placeholder="Your voiceover script…" style="resize:vertical"></textarea>
+      <label>Voice</label>
+      <select id="voice" onchange="voice=this.value">
+        ${['alloy','echo','fable','onyx','nova','shimmer'].map(v=>`<option value="${v}"${v==='nova'?' selected':''}>${v}</option>`).join('')}
+      </select>
+      <button class="btn-action" id="act-btn" onclick="runAction('tts')">Generate Voiceover</button>
+      ${project?.tts_audio_url?`<audio src="${project.tts_audio_url}" controls style="width:100%;height:36px"></audio>`:''}
+    `,
+    bg: `
+      <h2>Remove Background</h2>
+      <p style="font-size:13px;color:var(--muted);line-height:1.5">Removes background from your source image/video frame using AI.</p>
+      <button class="btn-action" id="act-btn" onclick="runAction('bg')">Remove Background</button>
+      ${project?.no_bg_image_url?`<img src="${project.no_bg_image_url}" style="width:100%;border-radius:8px;margin-top:8px">`:''}
+    `,
+    style: `
+      <h2>Stylize Video</h2>
+      <div class="style-grid">
+        <button class="style-opt ${style==='anime'?'active':''}" onclick="setStyle('anime')">🌸 Anime</button>
+        <button class="style-opt ${style==='3d'?'active':''}" onclick="setStyle('3d')">💠 3D</button>
+        <button class="style-opt ${style==='neon'?'active':''}" onclick="setStyle('neon')">⚡ Neon</button>
+      </div>
+      <button class="btn-action" id="act-btn" onclick="runAction('style')">Apply Style</button>
+      ${project?.stylized_video_url?`<video src="${project.stylized_video_url}" controls style="width:100%;border-radius:8px;margin-top:8px"></video>`:''}
+    `,
+    audio: `
+      <h2>Audio Library</h2>
+      <input id="audio-search" placeholder="Search tracks…" oninput="filterAudio()" style="margin-bottom:8px"/>
+      <div class="audio-list" id="audio-list">
+        ${audioTracks.length===0?'<p style="font-size:13px;color:var(--muted);text-align:center;padding:20px">Loading tracks…</p>':renderAudioList(audioTracks)}
+      </div>
+    `,
+    render: `
+      <h2>Export & Render</h2>
+      <p style="font-size:13px;color:var(--muted);line-height:1.5">Renders your video in HD MP4 via Shotstack (~30–60 sec).</p>
+      <button class="btn-action" id="act-btn" onclick="runAction('render')">Start Render</button>
+      ${project?.render_url?`<a href="${project.render_url}" target="_blank" style="background:#22c55e;color:#fff;font-size:14px;font-weight:600;padding:10px;border-radius:8px;text-align:center;display:block;margin-top:8px">⬇ Download Video</a><video src="${project.render_url}" controls style="width:100%;border-radius:8px;margin-top:8px"></video>`:''}
+    `
+  };
+  p.innerHTML = panels[activePanel] || '';
+  if (activePanel==='audio' && audioTracks.length===0) loadAudio();
+}
+
+function setStyle(s) { style=s; renderPanel(); }
+function filterAudio() {
+  const q = document.getElementById('audio-search').value.toLowerCase();
+  const ft = audioTracks.filter(t=>!q||t.title.toLowerCase().includes(q)||(t.tags||'').toLowerCase().includes(q));
+  document.getElementById('audio-list').innerHTML = renderAudioList(ft);
+}
+function renderAudioList(tracks) {
+  if (!tracks.length) return '<p style="font-size:13px;color:var(--muted);text-align:center;padding:20px">No tracks found.</p>';
+  return tracks.map(t=>`
+    <div class="audio-card">
+      <div class="audio-name">${t.title}</div>
+      <div class="audio-meta">${t.artist||''} · ${t.duration_sec||0}s · ${t.category||''}</div>
+      ${t.file_url?`<audio src="${t.file_url}" controls style="width:100%;height:30px;margin-top:6px"></audio>`:''}
+    </div>
+  `).join('');
+}
+async function loadAudio() {
+  try {
+    const res = await fetch(API+'/app-audio-library');
+    const data = await res.json();
+    audioTracks = data.tracks || [];
+    renderPanel();
+  } catch(e) {}
+}
+
+async function runAction(action) {
+  if (busy) return;
+  busy = true;
+  const btn = document.getElementById('act-btn');
+  if (btn) { btn.disabled=true; btn.textContent='Processing…'; }
+  try {
+    let res, data;
+    if (action==='captions') {
+      res = await fetch(API+'/app-ai-captions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({projectId,userId,language:lang})});
+      data = await res.json();
+      showMsg(res.ok?'Captions started — ~30s':'Captions failed: '+(data.error||''), res.ok);
+    } else if (action==='tts') {
+      const text = document.getElementById('tts-text').value.trim();
+      if (!text) { showMsg('Enter some text',false); return; }
+      res = await fetch(API+'/app-ai-tts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({projectId,userId,text,voice})});
+      data = await res.json();
+      showMsg(res.ok?'Voiceover generated!':'TTS failed: '+(data.error||''), res.ok);
+    } else if (action==='bg') {
+      res = await fetch(API+'/app-ai-remove-bg',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({projectId,userId})});
+      data = await res.json();
+      showMsg(res.ok?'Background removed!':'BG removal failed: '+(data.error||''), res.ok);
+    } else if (action==='style') {
+      res = await fetch(API+'/app-ai-stylize',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({projectId,userId,style})});
+      data = await res.json();
+      showMsg(res.ok?`Stylized as ${style}!`:'Stylize failed: '+(data.error||''), res.ok);
+    } else if (action==='render') {
+      if (!project?.video_url) { showMsg('Upload a video first',false); return; }
+      res = await fetch(API+'/app-render-video',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+        projectId,userId,
+        edit:{ clips:[{asset:{type:'video',src:project.video_url},start:0,length:15}], output:{format:'mp4',resolution:'hd'} }
+      })});
+      data = await res.json();
+      showMsg(res.ok?'Render complete! Download ready.':'Render failed: '+(data.error||''), res.ok);
+    }
+    if (res.ok) setTimeout(loadProject,1500);
+  } catch(e) { showMsg('Network error: '+e.message,false); }
+  finally { busy=false; if (btn) { btn.disabled=false; renderPanel(); } }
+}
+
+loadProject();
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+Options -Indexes
+RewriteEngine On
+
+# HTTPS redirect
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Route clean URLs to index.html folders
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([^/]+)/?$ $1/index.html [L]
+
+# Cache static assets
+<FilesMatch "\.(css|js|png|jpg|jpeg|gif|ico|svg|woff2?)$">
+  Header set Cache-Control "max-age=2592000, public"
+</FilesMatch>
