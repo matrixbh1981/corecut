@@ -101,7 +101,7 @@ document.getElementById('create-btn').addEventListener('click', function() {
   btn.disabled = true;
   btn.textContent = 'Creating...';
   var xhr = new XMLHttpRequest();
-  xhr.open('POST', API + '/app-upload', true);
+  xhr.open('POST', API + '/app-create-project', true);
   xhr.setRequestHeader('Content-Type', 'application/json');
   xhr.onload = function() {
     btn.disabled = false;
@@ -122,7 +122,7 @@ document.getElementById('create-btn').addEventListener('click', function() {
     btn.textContent = '+ New Project';
     showMsg('Network error', false);
   };
-  xhr.send(JSON.stringify({ userId: USER_ID, fileName: title + '.mp4', fileType: 'video/mp4', fileData: '', title: title }));
+  xhr.send(JSON.stringify({ userId: USER_ID, title: title }));
 });
 
 loadProjects();
