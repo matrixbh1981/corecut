@@ -103,26 +103,29 @@ document.getElementById('create-btn').addEventListener('click', function() {
   var xhr = new XMLHttpRequest();
   xhr.open('POST', API + '/app-create-project', true);
   xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.setRequestHeader('Accept', 'application/json');
   xhr.onload = function() {
     btn.disabled = false;
     btn.textContent = '+ New Project';
     try {
       var data = JSON.parse(xhr.responseText);
-      if (data.project_id) {
+      var pid = data.project_id || (data.data && data.data.project_id);
+      if (pid || xhr.status === 201) {
         showMsg('Project created!', true);
         document.getElementById('new-title').value = '';
         loadProjects();
       } else {
-        showMsg(data.error || 'Failed to create project', false);
+        showMsg(data.error || 'Failed: ' + xhr.responseText, false);
       }
-    } catch(e) { showMsg('Error', false); }
+    } catch(e) { showMsg('Response error: ' + xhr.responseText, false); }
   };
   xhr.onerror = function() {
     btn.disabled = false;
     btn.textContent = '+ New Project';
     showMsg('Network error', false);
   };
-  xhr.send(JSON.stringify({ userId: USER_ID, title: title }));
+  var payload = JSON.stringify({ userId: USER_ID, title: title });
+  xhr.send(payload);
 });
 
 loadProjects();
