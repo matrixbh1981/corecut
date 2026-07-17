@@ -445,12 +445,25 @@ function loadProject() {
     g('proj-badge').textContent = project.status || 'draft';
     if (project.video_url) { g('media-src-res').style.display='block'; g('media-src-link').href=project.video_url; }
     var src = project.render_url || project.stylized_video_url || project.processed_video_url || project.video_url;
-    if (src) loadMedia(src);
+    if (src) {
+      loadMedia(src);
+    } else {
+      // Project exists but has no media yet — show a clear prompt
+      g('pve').style.display = 'flex';
+      g('pve').innerHTML = '<div class="pvei">&#127916;</div><div style="font-size:13px;font-weight:600;margin-top:4px">No video imported yet</div><div style="font-size:11px;color:var(--mut);margin-top:4px">Click below or use the Media panel to import a file.</div><button class="pveb" id="import-btn2" style="margin-top:10px">+ Import Video</button>';
+      var btn2 = g('import-btn2'); if(btn2) btn2.addEventListener('click', triggerUpload);
+    }
     if (project.captions) { parseSRT(project.captions); showCapRes(project.captions); }
     if (project.no_bg_image_url) { g('bg-res').style.display='block'; g('bg-img').src=project.no_bg_image_url; }
     if (project.stylized_video_url) { g('style-res').style.display='block'; g('style-vid').src=project.stylized_video_url; }
     if (project.tts_audio_url) { g('tts-res').style.display='block'; g('tts-aud').src=project.tts_audio_url; }
-  }, function(){});
+  }, function(){
+    // API failed — clear loading state and show a usable message
+    g('proj-title').textContent = 'Untitled Project';
+    g('proj-badge').textContent = 'draft';
+    g('pve').innerHTML = '<div class="pvei">&#9888;</div><div style="font-size:12px;margin-top:4px">Could not load project data.</div><button class="pveb" id="import-btn2" style="margin-top:8px">+ Import Video</button>';
+    var btn2 = g('import-btn2'); if(btn2) btn2.addEventListener('click', triggerUpload);
+  });
 }
 function showCapRes(txt) {
   if (!txt) return;
