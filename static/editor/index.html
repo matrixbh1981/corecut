@@ -191,7 +191,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg
         <button class="op" onclick="pick(this,'sty-g')">Shadow</button>
         <button class="op" onclick="pick(this,'sty-g')">Outline</button>
       </div>
-      <button class="btn" onclick="addTextClip()">Add to Timeline</button>
+      <button class="btn" id="txt-add-btn" onclick="addTextClip()">Add to Timeline</button>
+      <button class="btn" id="txt-upd-btn" onclick="updateTextClip()" style="display:none;background:#059669">Update Text</button>
+      <button class="btn" id="txt-del-btn" onclick="deleteTextClip()" style="display:none;background:#dc2626">Delete Text</button>
+      <div id="txt-editing" style="display:none;font-size:11px;color:var(--al);text-align:center;padding:4px">Editing selected clip</div>
     </div>
 
     <!-- AUDIO -->
@@ -562,18 +565,91 @@ function pickVoice(el) { document.querySelectorAll('#tab-tts .op').forEach(funct
 function applySpeed() { if(vid) vid.playbackRate=curSpeed; showToast('Speed '+curSpeed+'x applied','tok'); }
 
 // ── Text overlays ─────────────────────────────────────────────
+var editingTxtId = null;
+
+function getTxtSettings() {
+  var sz = gi('tab-text').querySelector('input[type=range]').value || 36;
+  var posEl = gi('tab-text').querySelectorAll('.g3')[0].querySelector('.op.on');
+  var styEl = gi('tab-text').querySelectorAll('.g3')[1].querySelector('.op.on');
+  return {
+    sz: parseInt(sz),
+    pos: posEl ? posEl.textContent.trim() : 'Center',
+    sty: styEl ? styEl.textContent.trim() : 'Plain'
+  };
+}
+
+function setTxtSettings(clip) {
+  // set slider
+  gi('tab-text').querySelector('input[type=range]').value = clip.sz || 36;
+  gi('tsz').textContent = (clip.sz || 36) + 'px';
+  // set position buttons
+  gi('tab-text').querySelectorAll('.g3')[0].querySelectorAll('.op').forEach(function(b){
+    b.classList.toggle('on', b.textContent.trim() === clip.pos);
+  });
+  // set style buttons
+  gi('tab-text').querySelectorAll('.g3')[1].querySelectorAll('.op').forEach(function(b){
+    b.classList.toggle('on', b.textContent.trim() === clip.sty);
+  });
+  gi('txt-inp').value = clip.lbl;
+}
+
 function addTextClip() {
   var v = gi('txt-inp').value.trim(); if(!v){showToast('Enter text first','terr');return;}
-  // read current panel settings
-  var sz = gi('tab-text').querySelector('input[type=range]').value || 36;
-  var posEl = gi('tab-text').querySelector('.g3 .op.on');
-  var styEl = gi('tab-text').querySelectorAll('.g3')[1].querySelector('.op.on');
-  var pos = posEl ? posEl.textContent : 'Center';
-  var sty = styEl ? styEl.textContent : 'Plain';
-  var start = vid ? vid.currentTime : 0;
-  tlT.push({id:'txt'+Date.now(), start:start, dur:5, lbl:v, sz:parseInt(sz), pos:pos, sty:sty});
-  renderTL(); renderTextOverlays(vid ? vid.currentTime : 0);
+  var s = getTxtSettings();
+  tlT.push({id:'txt'+Date.now(), start:vid?vid.currentTime:0, dur:5, lbl:v, sz:s.sz, pos:s.pos, sty:s.sty});
+  editingTxtId = null;
+  showTxtAddMode();
+  renderTL(); renderTextOverlays(vid?vid.currentTime:0);
   showToast('Text added to video','tok'); gi('txt-inp').value='';
+}
+
+function loadTxtClipForEdit(id) {
+  var clip = null;
+  for (var i=0;i<tlT.length;i++) if(tlT[i].id===id){clip=tlT[i];break;}
+  if (!clip) return;
+  editingTxtId = id;
+  setTxtSettings(clip);
+  // open text panel
+  openTab('text', document.querySelector('.sbi[onclick*="text"]'));
+  showTxtEditMode();
+  showToast('Editing text clip — change and click Update','tinf');
+}
+
+function updateTextClip() {
+  var v = gi('txt-inp').value.trim(); if(!v){showToast('Enter text first','terr');return;}
+  var s = getTxtSettings();
+  for (var i=0;i<tlT.length;i++) {
+    if (tlT[i].id===editingTxtId) {
+      tlT[i].lbl=v; tlT[i].sz=s.sz; tlT[i].pos=s.pos; tlT[i].sty=s.sty;
+      break;
+    }
+  }
+  editingTxtId = null;
+  showTxtAddMode();
+  renderTL(); renderTextOverlays(vid?vid.currentTime:0);
+  showToast('Text updated','tok');
+}
+
+function deleteTextClip() {
+  tlT = tlT.filter(function(c){return c.id!==editingTxtId;});
+  editingTxtId = null;
+  showTxtAddMode();
+  gi('txt-inp').value='';
+  renderTL(); renderTextOverlays(vid?vid.currentTime:0);
+  showToast('Text deleted','tok');
+}
+
+function showTxtEditMode() {
+  gi('txt-add-btn').style.display='none';
+  gi('txt-upd-btn').style.display='block';
+  gi('txt-del-btn').style.display='block';
+  gi('txt-editing').style.display='block';
+}
+function showTxtAddMode() {
+  gi('txt-add-btn').style.display='block';
+  gi('txt-upd-btn').style.display='none';
+  gi('txt-del-btn').style.display='none';
+  gi('txt-editing').style.display='none';
 }
 
 function renderTextOverlays(t) {
@@ -682,10 +758,16 @@ function mkTrack(lbl,clips,cls,pps) {
   var row=document.createElement('div');row.className='tlrow';
   var l=document.createElement('div');l.className='tlrl';l.textContent=lbl;
   var tr=document.createElement('div');tr.className='tltr';
+  var isText = (cls==='ct');
   clips.forEach(function(c){
     var x=c.start*pps,w=Math.max((c.dur||5)*pps,50);
     var cl=document.createElement('div');cl.className='clip '+cls+(selClip===c.id?' sel':'');cl.style.cssText='left:'+x+'px;width:'+w+'px';cl.textContent=c.lbl;
-    cl.onclick=(function(id){return function(){selClip=selClip===id?null:id;renderTL();};})(c.id);
+    if (isText) {
+      cl.title = 'Click to edit this text clip';
+      cl.onclick=(function(id){return function(){ selClip=id; renderTL(); loadTxtClipForEdit(id); };})(c.id);
+    } else {
+      cl.onclick=(function(id){return function(){selClip=selClip===id?null:id;renderTL();};})(c.id);
+    }
     tr.appendChild(cl);
   });
   row.appendChild(l);row.appendChild(tr);return row;
