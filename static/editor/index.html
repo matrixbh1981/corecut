@@ -358,6 +358,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg
         <button class="btn" style="margin-top:8px;width:auto;padding:8px 16px" onclick="pickFile()">+ Import Video</button>
       </div>
       <div class="capo" id="capo"></div>
+      <!-- Live text overlays rendered here -->
+      <div id="txt-overlay" style="position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:10px"></div>
     </div>
     <input type="file" id="file-inp" style="display:none" accept="video/*,image/*" onchange="onFilePick()"/>
   </div>
@@ -491,6 +493,7 @@ function onTick() {
   gi('pbf').style.width=p+'%'; gi('pbh').style.left=p+'%';
   gi('pb-time').textContent=fmt(t)+' / '+fmt(d);
   updCap(t);
+  renderTextOverlays(t);
   var ph=gi('tlph'), inn=gi('tlinn');
   if(ph&&inn) ph.style.left=(72+(t/d)*(inn.offsetWidth-72))+'px';
 }
@@ -558,11 +561,44 @@ function pickStyleOpt(el) { document.querySelectorAll('#tab-style .op').forEach(
 function pickVoice(el) { document.querySelectorAll('#tab-tts .op').forEach(function(b){b.classList.remove('on');}); el.classList.add('on'); curVoice=el.dataset.v||'nova'; }
 function applySpeed() { if(vid) vid.playbackRate=curSpeed; showToast('Speed '+curSpeed+'x applied','tok'); }
 
-// ── Text ──────────────────────────────────────────────────────
+// ── Text overlays ─────────────────────────────────────────────
 function addTextClip() {
   var v = gi('txt-inp').value.trim(); if(!v){showToast('Enter text first','terr');return;}
-  tlT.push({id:'txt'+Date.now(),start:vid?vid.currentTime:0,dur:5,lbl:v});
-  renderTL(); showToast('Text clip added','tok'); gi('txt-inp').value='';
+  // read current panel settings
+  var sz = gi('tab-text').querySelector('input[type=range]').value || 36;
+  var posEl = gi('tab-text').querySelector('.g3 .op.on');
+  var styEl = gi('tab-text').querySelectorAll('.g3')[1].querySelector('.op.on');
+  var pos = posEl ? posEl.textContent : 'Center';
+  var sty = styEl ? styEl.textContent : 'Plain';
+  var start = vid ? vid.currentTime : 0;
+  tlT.push({id:'txt'+Date.now(), start:start, dur:5, lbl:v, sz:parseInt(sz), pos:pos, sty:sty});
+  renderTL(); renderTextOverlays(vid ? vid.currentTime : 0);
+  showToast('Text added to video','tok'); gi('txt-inp').value='';
+}
+
+function renderTextOverlays(t) {
+  var ov = gi('txt-overlay'); if(!ov) return;
+  ov.innerHTML = '';
+  for (var i=0; i<tlT.length; i++) {
+    var c = tlT[i];
+    if (t < c.start || t > c.start + c.dur) continue;
+    var el = document.createElement('div');
+    var sz = c.sz || 36;
+    // position
+    var top='50%', transform='translateX(-50%) translateY(-50%)';
+    if (c.pos==='Top')    { top='8%';  transform='translateX(-50%)'; }
+    if (c.pos==='Bottom') { top='88%'; transform='translateX(-50%)'; }
+    // style
+    var shadow='none', outline='none', bg='rgba(0,0,0,0)';
+    if (c.sty==='Shadow')  shadow='2px 2px 8px rgba(0,0,0,0.9)';
+    if (c.sty==='Outline') { shadow='0 0 3px #000,-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000'; }
+    el.style.cssText = 'position:absolute;left:50%;top:'+top+';transform:'+transform+';'+
+      'font-size:'+sz+'px;font-weight:700;color:#fff;font-family:sans-serif;'+
+      'text-shadow:'+shadow+';white-space:pre-wrap;text-align:center;max-width:90%;'+
+      'line-height:1.2;padding:4px 8px;border-radius:4px;background:'+bg;
+    el.textContent = c.lbl;
+    ov.appendChild(el);
+  }
 }
 
 // ── Audio library ─────────────────────────────────────────────
@@ -619,7 +655,9 @@ function doExport() {
   var src=(project&&project.video_url)||'';
   var clips=tlV.length?tlV.map(function(c){return{asset:{type:'video',src:src},start:c.start,length:c.dur||15,speed:curSpeed};}):
     [{asset:{type:'video',src:src},start:0,length:15,speed:curSpeed}];
-  xhr('POST',API+'/app-render-video',JSON.stringify({projectId:PID,userId:UID,edit:{clips:clips,output:{format:'mp4',resolution:'hd',aspectRatio:curRatio.replace('-',':')}}}),
+  var txtClips=tlT.map(function(c){return{asset:{type:'title',text:c.lbl,style:'minimal',size:c.sz||36},start:c.start,length:c.dur||5};});
+  var allClips=clips.concat(txtClips);
+  xhr('POST',API+'/app-render-video',JSON.stringify({projectId:PID,userId:UID,edit:{clips:allClips,output:{format:'mp4',resolution:'hd',aspectRatio:curRatio.replace('-',':')}}}),
     function(d){ busy=false;btn.textContent='Export &#8593;';btn.disabled=false; showToast('Render started! Check in ~60s','tok'); setTimeout(loadProject,8000); },
     function(s,d){ busy=false;btn.textContent='Export &#8593;';btn.disabled=false; showToast((d&&d.error)||'Render failed','terr'); }
   );
