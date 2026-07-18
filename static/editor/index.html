@@ -8,251 +8,385 @@
 :root{--bg:#0d0d12;--s1:#16161f;--s2:#1e1e2a;--s3:#252532;--bd:#2d2d3d;--tx:#f0f0f8;--mu:#8888aa;--ac:#7c3aed;--al:#a78bfa;--gn:#22c55e;--rd:#ef4444;--yl:#eab308}
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;overflow:hidden}
-body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
-/* TOP */
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
+
+/* ── TOP BAR ─────────────────────────────────────── */
 .top{display:flex;align-items:center;gap:8px;padding:0 14px;height:48px;background:var(--s1);border-bottom:1px solid var(--bd);flex-shrink:0}
-.logo{font-size:18px;font-weight:900;color:var(--al)}
-.sp{width:1px;height:22px;background:var(--bd)}
-.ic{background:none;border:1px solid var(--bd);color:var(--mu);cursor:pointer;font-size:12px;padding:4px 10px;border-radius:6px}
-.ic:hover{color:var(--tx)}
-.ti{background:none;border:none;color:var(--mu);cursor:pointer;font-size:14px;width:28px;height:28px;border-radius:5px}
+.logo{font-size:18px;font-weight:900;color:var(--al);text-decoration:none}
+.divider{width:1px;height:22px;background:var(--bd)}
+.ptitle{flex:1;font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--tx)}
+.ti{background:none;border:none;color:var(--mu);cursor:pointer;font-size:16px;width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center}
 .ti:hover{background:var(--s2);color:var(--tx)}
-.ptitle{flex:1;font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:#1e3a5f;color:#60a5fa}
+.ti.act{color:var(--gn)}
 .rb{background:var(--s2);border:1px solid var(--bd);color:var(--mu);font-size:10px;font-weight:700;padding:4px 7px;border-radius:5px;cursor:pointer}
 .rb.on{background:rgba(124,58,237,.2);border-color:var(--ac);color:var(--al)}
-.expbtn{background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;font-size:12px;font-weight:700;padding:6px 16px;border-radius:7px;border:none;cursor:pointer}
-/* MAIN */
+.expbtn{background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;font-size:12px;font-weight:700;padding:6px 16px;border-radius:7px;border:none;cursor:pointer;white-space:nowrap}
+.expbtn:hover{opacity:.9}
+.undo-btn{background:none;border:1px solid var(--bd);color:var(--mu);font-size:11px;padding:4px 8px;border-radius:5px;cursor:pointer}
+.undo-btn:hover{color:var(--tx);border-color:var(--ac)}
+
+/* ── MAIN ────────────────────────────────────────── */
 .main{flex:1;display:flex;overflow:hidden}
-/* SIDEBAR */
-.sb{width:70px;background:var(--s1);border-right:1px solid var(--bd);display:flex;flex-direction:column;align-items:center;padding:6px 0;gap:1px;flex-shrink:0;overflow-y:auto}
-.sbi{display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 4px;border-radius:7px;cursor:pointer;width:62px;border:none;background:none;color:var(--mu);font-size:9px;font-weight:600;text-align:center}
+
+/* ── LEFT SIDEBAR (icons) ────────────────────────── */
+.sb{width:68px;background:var(--s1);border-right:1px solid var(--bd);display:flex;flex-direction:column;align-items:center;padding:4px 0;gap:1px;flex-shrink:0;overflow-y:auto}
+.sbi{display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 4px;border-radius:7px;cursor:pointer;width:60px;border:none;background:none;color:var(--mu);font-size:9px;font-weight:600;text-align:center}
 .sbi:hover{background:var(--s2);color:var(--tx)}
 .sbi.on{background:rgba(124,58,237,.15);color:var(--al)}
-.sbi-ic{font-size:18px;line-height:1;margin-bottom:1px}
-/* PANEL */
-.pnl{width:252px;background:var(--s1);border-right:1px solid var(--bd);display:none;flex-direction:column;overflow:hidden;flex-shrink:0}
-.pnl.open{display:flex}
-.pnlh{padding:12px 14px 10px;font-size:13px;font-weight:700;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.pnlx{background:none;border:none;color:var(--mu);font-size:20px;cursor:pointer;line-height:1}
-.pnlb{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
-.tab{display:none;flex-direction:column;gap:8px}
-.tab.on{display:flex}
-/* Controls */
-.lbl{font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.4px;margin-top:4px}
-.inp,.sel,.ta{width:100%;background:var(--s2);border:1px solid var(--bd);border-radius:7px;padding:8px 10px;font-size:12px;color:var(--tx);outline:none;font-family:inherit}
-.ta{resize:vertical;min-height:72px}
-.btn{background:var(--ac);color:#fff;padding:9px;border-radius:7px;font-size:12px;font-weight:700;width:100%;border:none;cursor:pointer}
-.btn:hover{background:#6d28d9}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-.btn2{background:var(--s2);color:var(--tx);border:1px solid var(--bd);padding:7px;border-radius:7px;font-size:11px;width:100%;cursor:pointer}
-.btn2:hover{border-color:var(--ac);color:var(--al)}
-.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:5px}
-.op{background:var(--s2);border:1px solid var(--bd);border-radius:7px;padding:8px 4px;font-size:11px;font-weight:600;color:var(--mu);cursor:pointer;text-align:center;width:100%}
-.op.on{background:rgba(124,58,237,.12);color:var(--al);border-color:var(--ac)}
-.slr{display:flex;align-items:center;gap:7px}
+.sbi-ic{font-size:17px;line-height:1;margin-bottom:1px}
+.sb-sep{width:44px;height:1px;background:var(--bd);margin:4px 0}
+
+/* ── TOOL PANEL ──────────────────────────────────── */
+.pnl{width:0;background:var(--s1);border-right:1px solid var(--bd);flex-shrink:0;display:flex;flex-direction:column;overflow:hidden;transition:width .2s}
+.pnl.open{width:260px}
+.pnlh{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--bd);flex-shrink:0}
+.pnlh span{font-size:12px;font-weight:700;color:var(--tx)}
+.pnlx{background:none;border:none;color:var(--mu);cursor:pointer;font-size:16px;line-height:1;padding:2px 5px;border-radius:4px}
+.pnlx:hover{background:var(--s2);color:var(--tx)}
+.pnlb{flex:1;overflow-y:auto;padding:12px}
+.tab{display:none}
+.tab.on{display:block}
+
+/* ── PANEL CONTROLS ──────────────────────────────── */
+.lbl{font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.5px;margin:10px 0 4px}
+.lbl:first-child{margin-top:0}
+.inp{width:100%;background:var(--s2);border:1px solid var(--bd);border-radius:7px;padding:7px 9px;font-size:12px;color:var(--tx);outline:none;font-family:inherit}
+.inp:focus{border-color:var(--ac)}
+.sel{width:100%;background:var(--s2);border:1px solid var(--bd);border-radius:7px;padding:7px 9px;font-size:12px;color:var(--tx);outline:none}
+.ta{width:100%;background:var(--s2);border:1px solid var(--bd);border-radius:7px;padding:7px 9px;font-size:12px;color:var(--tx);outline:none;resize:none;height:90px;font-family:inherit}
+.ta:focus{border-color:var(--ac)}
+.slr{display:flex;align-items:center;gap:8px}
 .slr input[type=range]{flex:1;accent-color:var(--ac)}
-.slv{font-size:11px;color:var(--mu);min-width:32px;text-align:right}
-.rbox{background:var(--s2);border:1px solid var(--bd);border-radius:7px;padding:9px;margin-top:2px}
-.rlbl{font-size:9px;font-weight:700;color:var(--mu);text-transform:uppercase;margin-bottom:5px}
-.tc{background:var(--s2);border:1px solid var(--bd);border-radius:7px;padding:9px 10px;margin-bottom:2px}
-.fg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.fo{border-radius:7px;overflow:hidden;cursor:pointer;border:2px solid transparent}
+.slv{font-size:11px;color:var(--al);min-width:36px;text-align:right}
+.btn{width:100%;background:var(--ac);color:#fff;font-size:12px;font-weight:700;padding:8px;border-radius:7px;border:none;cursor:pointer;margin-top:8px}
+.btn:hover{background:#6d28d9}
+.btn.gn{background:#059669}.btn.gn:hover{background:#047857}
+.btn.rd{background:#dc2626}.btn.rd:hover{background:#b91c1c}
+.btn.gy{background:var(--s2);border:1px solid var(--bd);color:var(--tx)}.btn.gy:hover{border-color:var(--ac)}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:4px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.op{background:var(--s2);border:1px solid var(--bd);color:var(--mu);font-size:10px;font-weight:600;padding:5px 4px;border-radius:5px;cursor:pointer;text-align:center}
+.op:hover{border-color:var(--ac);color:var(--al)}
+.op.on{background:rgba(124,58,237,.18);border-color:var(--ac);color:var(--al)}
+.rbox{background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:8px 10px;margin-top:8px}
+.rlbl{font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;margin-bottom:4px}
+
+/* ── FILTER / TRANSITION GRIDS ───────────────────── */
+.fg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:6px}
+.fo{border:2px solid transparent;border-radius:7px;overflow:hidden;cursor:pointer}
 .fo.on{border-color:var(--ac)}
-.ft{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff}
-.tg{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.to{background:var(--s2);border:1px solid var(--bd);border-radius:7px;padding:10px 6px;text-align:center;font-size:11px;font-weight:600;color:var(--mu);cursor:pointer}
-.to.on{border-color:var(--ac);color:var(--al);background:rgba(124,58,237,.12)}
-.sps{display:flex;gap:5px;flex-wrap:wrap;margin-top:2px}
-.sp{background:var(--s2);border:1px solid var(--bd);border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;color:var(--mu);cursor:pointer}
-.sp.on{background:rgba(124,58,237,.12);color:var(--al);border-color:var(--ac)}
-/* CENTER */
+.ft{height:48px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff}
+.tg{display:grid;grid-template-columns:repeat(2,1fr);gap:5px}
+.to{background:var(--s2);border:1px solid var(--bd);color:var(--mu);font-size:11px;padding:7px;border-radius:6px;cursor:pointer;text-align:center}
+.to:hover{border-color:var(--ac);color:var(--al)}
+.to.on{background:rgba(124,58,237,.18);border-color:var(--ac);color:var(--al)}
+
+/* ── SPEED BUTTONS ───────────────────────────────── */
+.sps{display:flex;flex-wrap:wrap;gap:4px}
+.spb{background:var(--s2);border:1px solid var(--bd);color:var(--mu);font-size:11px;font-weight:700;padding:5px 8px;border-radius:5px;cursor:pointer}
+.spb:hover{border-color:var(--ac);color:var(--al)}
+.spb.on{background:rgba(124,58,237,.2);border-color:var(--ac);color:var(--al)}
+
+/* ── AUDIO LIST ──────────────────────────────────── */
+.arow{display:flex;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--bd);border-radius:7px;padding:7px 9px;cursor:pointer}
+.arow:hover{border-color:var(--ac)}
+.arow.on{border-color:var(--ac);background:rgba(124,58,237,.08)}
+.arow-ic{font-size:16px;flex-shrink:0}
+.arow-info{flex:1;min-width:0}
+.arow-title{font-size:11px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.arow-sub{font-size:10px;color:var(--mu)}
+.arow-dur{font-size:10px;color:var(--mu);flex-shrink:0}
+
+/* ── STICKERS / EMOJI GRID ───────────────────────── */
+.stk-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:4px}
+.stk{font-size:22px;text-align:center;cursor:pointer;padding:4px;border-radius:6px;border:1px solid transparent}
+.stk:hover{background:var(--s2);border-color:var(--bd)}
+
+/* ── TEMPLATE CARDS ──────────────────────────────── */
+.tmpl-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tmpl{background:var(--s2);border:1px solid var(--bd);border-radius:9px;overflow:hidden;cursor:pointer}
+.tmpl:hover{border-color:var(--ac)}
+.tmpl-thumb{height:64px;display:flex;align-items:center;justify-content:center;font-size:28px}
+.tmpl-label{font-size:10px;font-weight:700;padding:5px 7px;color:var(--mu);border-top:1px solid var(--bd)}
+
+/* ── CENTER AREA ─────────────────────────────────── */
 .ctr{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
-/* PREVIEW */
-.pva{flex:1;display:flex;align-items:center;justify-content:center;background:var(--bg);padding:12px;overflow:hidden;position:relative}
-.pvb{background:#000;border-radius:10px;overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 1px var(--bd),0 8px 32px rgba(0,0,0,.6)}
-.pvb video,.pvb img{width:100%;height:100%;object-fit:contain}
-.r9-16{aspect-ratio:9/16;max-height:100%;max-width:56%}
-.r16-9{aspect-ratio:16/9;max-width:100%;max-height:100%}
-.r1-1{aspect-ratio:1;max-width:100%;max-height:100%}
-.r4-5{aspect-ratio:4/5;max-width:80%;max-height:100%}
-.pve{color:var(--mu);font-size:13px;display:flex;flex-direction:column;align-items:center;gap:7px;padding:20px;text-align:center}
-.capo{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.8);color:#fff;font-size:14px;font-weight:600;padding:5px 12px;border-radius:5px;max-width:88%;pointer-events:none;display:none}
-/* PLAYBACK */
-.pb{display:flex;align-items:center;gap:10px;padding:7px 14px;background:var(--s1);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);flex-shrink:0}
-.pbi{background:none;border:none;color:var(--mu);cursor:pointer;font-size:14px;width:28px;height:28px;border-radius:5px}
-.pbi:hover{color:var(--tx);background:var(--s2)}
-.pbpl{background:var(--ac);color:#fff;border-radius:50%;width:32px;height:32px}
+
+/* ── PREVIEW ─────────────────────────────────────── */
+.pva{flex:1;display:flex;align-items:center;justify-content:center;background:var(--bg);overflow:hidden;position:relative}
+.pvb{background:#000;border-radius:10px;overflow:hidden;position:relative;box-shadow:0 4px 40px rgba(0,0,0,.6)}
+.pvb.r9-16{width:min(200px, 45vh);height:min(356px, 80vh)}
+.pvb.r16-9{width:min(480px, 80vw);height:min(270px, 45vh)}
+.pvb.r1-1{width:min(300px, 60vh);height:min(300px, 60vh)}
+.pvb.r4-5{width:min(240px, 48vh);height:min(300px, 60vh)}
+.pvb.r21-9{width:min(480px, 80vw);height:min(205px, 35vh)}
+video.main-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.pve{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:13px;color:var(--mu);gap:8px}
+.capo{position:absolute;bottom:12%;left:0;right:0;text-align:center;font-size:16px;font-weight:700;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.9);padding:0 10px;pointer-events:none}
+#txt-overlay{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:10px}
+
+/* ── PLAYBACK BAR ────────────────────────────────── */
+.pb{display:flex;align-items:center;gap:8px;padding:6px 14px;background:var(--s1);border-top:1px solid var(--bd);flex-shrink:0}
+.pbi{background:none;border:none;color:var(--tx);cursor:pointer;font-size:16px;line-height:1;padding:4px;border-radius:5px}
+.pbi:hover{background:var(--s2)}
+.pbpl{font-size:20px;width:32px;height:32px;border-radius:50%;background:var(--ac);color:#fff;display:flex;align-items:center;justify-content:center}
 .pbpl:hover{background:#6d28d9}
-.pbt{font-size:11px;color:var(--mu);font-family:monospace;white-space:nowrap}
-.pbp{flex:1;height:4px;background:var(--s3);border-radius:2px;cursor:pointer;position:relative}
-.pbf{height:100%;background:var(--ac);border-radius:2px;width:0}
-.pbh{position:absolute;top:-4px;width:12px;height:12px;background:#fff;border-radius:50%;margin-left:-6px;left:0;pointer-events:none}
-.pbv{display:flex;align-items:center;gap:5px}
-.pbv input{width:56px;accent-color:var(--ac)}
-.pbac{background:var(--s2);border:1px solid var(--bd);color:var(--mu);font-size:11px;font-weight:600;padding:4px 9px;border-radius:5px;cursor:pointer}
-.pbac:hover{border-color:var(--yl);color:var(--yl)}
-/* TIMELINE */
-.tla{height:186px;background:var(--s1);border-top:1px solid var(--bd);flex-shrink:0;display:flex;flex-direction:column}
-.tlh{display:flex;align-items:center;padding:5px 12px;gap:7px;border-bottom:1px solid var(--bd);flex-shrink:0}
-.tll{font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase}
-.tladd{background:var(--s2);border:1px solid var(--bd);color:var(--mu);font-size:10px;padding:3px 8px;border-radius:4px;cursor:pointer}
-.tladd:hover{color:var(--tx);border-color:var(--ac)}
-.tlzr{display:flex;align-items:center;gap:5px;margin-left:auto}
-.tlzr button{background:var(--s2);border:1px solid var(--bd);color:var(--mu);font-size:13px;width:24px;height:24px;border-radius:4px;cursor:pointer}
-.tlzl{font-size:10px;color:var(--mu);min-width:26px;text-align:center}
-.tlt{flex:1;overflow-x:auto;overflow-y:hidden}
-.tlrow{display:flex;align-items:center;height:38px}
-.tlrl{width:72px;font-size:9px;font-weight:700;color:var(--mu);text-transform:uppercase;padding:0 8px;flex-shrink:0;text-align:right}
-.tltr{flex:1;height:30px;background:var(--s2);position:relative}
-.clip{position:absolute;top:2px;height:26px;border-radius:5px;display:flex;align-items:center;padding:0 8px;font-size:10px;font-weight:600;white-space:nowrap;overflow:hidden;cursor:pointer;border:1.5px solid}
-.cv{background:#3b1d8a;border-color:#7c3aed;color:#c4b5fd}
-.ca{background:#1a3a2a;border-color:#22c55e;color:#86efac}
-.ct{background:#3a1a1a;border-color:#ef4444;color:#fca5a5}
-.clip.sel{box-shadow:0 0 0 2px #fff}
-.tlph{position:absolute;top:0;bottom:0;width:2px;background:var(--al);pointer-events:none;z-index:10}
-/* TOAST */
-.toast{position:fixed;top:56px;left:50%;transform:translateX(-50%);padding:8px 18px;border-radius:8px;font-size:12px;font-weight:600;z-index:9999;display:none;white-space:nowrap}
+.pbt{font-size:11px;color:var(--mu);white-space:nowrap;min-width:80px}
+.pbp{flex:1;height:6px;background:var(--s2);border-radius:3px;cursor:pointer;position:relative}
+.pbf{height:100%;background:var(--ac);border-radius:3px;pointer-events:none}
+.pbh{position:absolute;top:50%;width:12px;height:12px;background:var(--al);border-radius:50%;transform:translate(-50%,-50%);pointer-events:none}
+.pbv{display:flex;align-items:center;gap:6px}
+.pbv input{width:60px;accent-color:var(--ac)}
+.pbac{background:var(--s2);border:1px solid var(--bd);color:var(--mu);font-size:10px;font-weight:700;padding:4px 8px;border-radius:5px;cursor:pointer;white-space:nowrap}
+.pbac:hover{border-color:var(--ac);color:var(--al)}
+
+/* ── TIMELINE ────────────────────────────────────── */
+.tla{background:var(--s1);border-top:1px solid var(--bd);flex-shrink:0;height:130px;display:flex;flex-direction:column}
+.tlh{display:flex;align-items:center;gap:8px;padding:6px 12px;border-bottom:1px solid var(--bd);flex-shrink:0}
+.tll{font-size:11px;font-weight:700;color:var(--mu)}
+.tladd{background:var(--s2);border:1px solid var(--bd);color:var(--mu);font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;cursor:pointer}
+.tladd:hover{border-color:var(--ac);color:var(--al)}
+.tlzr{display:flex;align-items:center;gap:4px;margin-left:auto}
+.tlzr button{background:var(--s2);border:1px solid var(--bd);color:var(--mu);font-size:12px;width:22px;height:22px;border-radius:4px;cursor:pointer}
+.tlzr button:hover{color:var(--al)}
+.tlzl{font-size:11px;color:var(--mu);min-width:28px;text-align:center}
+.tlt{flex:1;overflow-x:auto;overflow-y:hidden;padding:8px 12px;display:flex;flex-direction:column;gap:4px}
+.tl-track{display:flex;align-items:center;gap:4px;flex-shrink:0}
+.tl-lbl{font-size:9px;font-weight:700;color:var(--mu);width:36px;flex-shrink:0;text-transform:uppercase}
+.tl-clips{display:flex;gap:3px;min-height:36px;align-items:center}
+.clip{height:34px;border-radius:6px;display:flex;align-items:center;padding:0 8px;font-size:10px;font-weight:700;cursor:pointer;user-select:none;white-space:nowrap;overflow:hidden;border:2px solid transparent;flex-shrink:0;position:relative}
+.clip.sel{border-color:#fff}
+.clip-v{background:linear-gradient(90deg,#4c1d95,#6d28d9)}
+.clip-t{background:linear-gradient(90deg,#065f46,#059669)}
+.clip-a{background:linear-gradient(90deg,#92400e,#d97706)}
+.clip-grip{position:absolute;right:0;top:0;bottom:0;width:6px;cursor:ew-resize;background:rgba(255,255,255,.15);border-radius:0 4px 4px 0}
+
+/* ── EXPORT MODAL ────────────────────────────────── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:800;display:none;align-items:center;justify-content:center}
+.modal-bg.on{display:flex}
+.modal{background:var(--s1);border:1px solid var(--bd);border-radius:14px;padding:24px;width:380px;max-width:95vw}
+.modal h3{font-size:15px;font-weight:800;margin-bottom:16px}
+.mclose{position:absolute;top:12px;right:14px;background:none;border:none;color:var(--mu);font-size:18px;cursor:pointer}
+.mrow{margin-bottom:12px}
+.mlbl{font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;margin-bottom:5px}
+.mbtns{display:flex;flex-wrap:wrap;gap:5px}
+.mbtn{background:var(--s2);border:1px solid var(--bd);color:var(--mu);font-size:11px;font-weight:600;padding:5px 10px;border-radius:6px;cursor:pointer}
+.mbtn:hover,.mbtn.on{background:rgba(124,58,237,.2);border-color:var(--ac);color:var(--al)}
+
+/* ── TOAST ───────────────────────────────────────── */
+.toast{position:fixed;top:18px;right:18px;padding:9px 16px;border-radius:8px;font-size:12px;font-weight:700;z-index:9999;display:none;white-space:nowrap}
 .tok{background:#14532d;color:#86efac;border:1px solid var(--gn)}
 .terr{background:#450a0a;color:#fca5a5;border:1px solid var(--rd)}
 .tinf{background:#1e3a5f;color:#93c5fd;border:1px solid #3b82f6}
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:var(--s2)}
-::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px}
+.twrn{background:#451a03;color:#fcd34d;border:1px solid var(--yl)}
+
+/* ── CHROMA KEY PREVIEW ──────────────────────────── */
+.ck-swatch{width:32px;height:32px;border-radius:6px;border:2px solid var(--bd);cursor:pointer;flex-shrink:0}
+
+/* ── AI STATUS BAR ───────────────────────────────── */
+.ai-status{display:none;align-items:center;gap:8px;padding:6px 10px;background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.3);border-radius:7px;margin-top:8px;font-size:11px;color:var(--al)}
+.ai-spinner{width:14px;height:14px;border:2px solid rgba(167,139,250,.3);border-top-color:var(--al);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── PIP OVERLAY ─────────────────────────────────── */
+.pip-layer{position:absolute;width:120px;height:80px;background:rgba(124,58,237,.15);border:2px dashed var(--ac);border-radius:6px;top:10px;right:10px;display:none;align-items:center;justify-content:center;color:var(--al);font-size:11px;cursor:move;user-select:none}
+
+/* ── BRAND KIT ───────────────────────────────────── */
+.bk-color{width:28px;height:28px;border-radius:50%;border:2px solid var(--bd);cursor:pointer;display:inline-block}
 </style>
 </head>
 <body>
 
-<!-- TOP BAR -->
+<!-- ═══ TOP BAR ═══════════════════════════════════════════════ -->
 <div class="top">
-  <span class="logo">CoreCut</span>
-  <button class="ic" onclick="location.href='../projects/'">&#8592; Projects</button>
-  <div class="sp"></div>
-  <button class="ti" onclick="showToast('Undo','tinf')">&#8617;</button>
-  <button class="ti" onclick="showToast('Redo','tinf')">&#8618;</button>
-  <div class="sp"></div>
-  <span class="ptitle" id="ptitle">Loading&#8230;</span>
-  <span class="badge" id="pbadge">draft</span>
-  <div class="sp"></div>
-  <div style="display:flex;gap:3px">
-    <button class="rb" onclick="setRatio('16-9',this)">16:9</button>
-    <button class="rb on" onclick="setRatio('9-16',this)">9:16</button>
-    <button class="rb" onclick="setRatio('1-1',this)">1:1</button>
-    <button class="rb" onclick="setRatio('4-5',this)">4:5</button>
-  </div>
-  <button class="expbtn" onclick="doExport()">Export &#8593;</button>
+  <a href="../" class="logo" title="Back to projects">CoreCut</a>
+  <div class="divider"></div>
+  <button class="undo-btn" onclick="doUndo()" title="Undo">&#8592; Undo</button>
+  <button class="undo-btn" onclick="doRedo()" title="Redo">Redo &#8594;</button>
+  <div class="divider"></div>
+  <span class="ptitle" id="proj-title">Untitled Project</span>
+  <!-- Aspect ratio -->
+  <button class="rb on" onclick="setRatio('r9-16',this)" title="TikTok / Reels / Stories">9:16</button>
+  <button class="rb" onclick="setRatio('r16-9',this)" title="YouTube / Landscape">16:9</button>
+  <button class="rb" onclick="setRatio('r1-1',this)" title="Instagram Square">1:1</button>
+  <button class="rb" onclick="setRatio('r4-5',this)" title="Instagram Portrait">4:5</button>
+  <button class="rb" onclick="setRatio('r21-9',this)" title="Cinematic">21:9</button>
+  <div class="divider"></div>
+  <button class="expbtn" onclick="openExport()">&#8679; Export</button>
 </div>
 
+<!-- ═══ MAIN ═══════════════════════════════════════════════════ -->
 <div class="main">
 
-<!-- SIDEBAR -->
+<!-- ── LEFT SIDEBAR ──────────────────────────────── -->
 <div class="sb">
-  <button class="sbi" onclick="openTab('media',this)"><span class="sbi-ic">&#128193;</span>Media</button>
-  <button class="sbi" onclick="openTab('text',this)"><span class="sbi-ic" style="font-weight:900;font-size:16px">T</span>Text</button>
-  <button class="sbi" onclick="openTab('audio',this)"><span class="sbi-ic">&#9836;</span>Audio</button>
-  <button class="sbi" onclick="openTab('captions',this)"><span class="sbi-ic" style="font-size:12px;font-weight:800">CC</span>Captions</button>
-  <button class="sbi" onclick="openTab('effects',this)"><span class="sbi-ic">&#10024;</span>Effects</button>
-  <button class="sbi" onclick="openTab('filter',this)"><span class="sbi-ic">&#127912;</span>Filter</button>
-  <button class="sbi" onclick="openTab('trans',this)"><span class="sbi-ic">&#8594;</span>Trans.</button>
-  <button class="sbi" onclick="openTab('speed',this)"><span class="sbi-ic">&#9889;</span>Speed</button>
-  <button class="sbi" onclick="openTab('bg',this)"><span class="sbi-ic">&#9988;</span>BG Cut</button>
-  <button class="sbi" onclick="openTab('style',this)"><span class="sbi-ic">&#127917;</span>Stylize</button>
-  <button class="sbi" onclick="openTab('tts',this)"><span class="sbi-ic">&#127908;</span>Voice</button>
+  <!-- 1. Core Video Editing -->
+  <button class="sbi" onclick="openTab('media',this)" title="Import media"><span class="sbi-ic">&#128249;</span>Media</button>
+  <button class="sbi" onclick="openTab('trim',this)" title="Trim & split clips"><span class="sbi-ic">&#9986;</span>Trim</button>
+  <button class="sbi" onclick="openTab('crop',this)" title="Crop & rotate"><span class="sbi-ic">&#8999;</span>Crop</button>
+  <button class="sbi" onclick="openTab('speed',this)" title="Speed controls"><span class="sbi-ic">&#9889;</span>Speed</button>
+  <div class="sb-sep"></div>
+  <!-- 2. Effects & Transitions -->
+  <button class="sbi" onclick="openTab('effects',this)" title="Effects"><span class="sbi-ic">&#10024;</span>Effects</button>
+  <button class="sbi" onclick="openTab('filter',this)" title="Filters & color"><span class="sbi-ic">&#127912;</span>Filter</button>
+  <button class="sbi" onclick="openTab('trans',this)" title="Transitions"><span class="sbi-ic">&#9654;</span>Trans.</button>
+  <button class="sbi" onclick="openTab('chroma',this)" title="Green screen / chroma key"><span class="sbi-ic">&#9655;</span>Chroma</button>
+  <button class="sbi" onclick="openTab('pip',this)" title="Picture-in-picture"><span class="sbi-ic">&#9645;</span>PiP</button>
+  <button class="sbi" onclick="openTab('bg',this)" title="Background removal"><span class="sbi-ic">&#9988;</span>BG Cut</button>
+  <div class="sb-sep"></div>
+  <!-- 3. Text, Captions & Stickers -->
+  <button class="sbi" onclick="openTab('text',this)" title="Text & titles"><span class="sbi-ic" style="font-size:15px;font-weight:900">T</span>Text</button>
+  <button class="sbi" onclick="openTab('captions',this)" title="Auto-captions"><span class="sbi-ic" style="font-size:11px;font-weight:800">CC</span>Captions</button>
+  <button class="sbi" onclick="openTab('stickers',this)" title="Stickers & emojis"><span class="sbi-ic">&#127881;</span>Stickers</button>
+  <div class="sb-sep"></div>
+  <!-- 4. Audio -->
+  <button class="sbi" onclick="openTab('audio',this)" title="Music library"><span class="sbi-ic">&#9836;</span>Audio</button>
+  <button class="sbi" onclick="openTab('tts',this)" title="Text-to-speech voiceover"><span class="sbi-ic">&#127908;</span>Voice</button>
+  <div class="sb-sep"></div>
+  <!-- 5. AI Features -->
+  <button class="sbi" onclick="openTab('ai',this)" title="AI tools"><span class="sbi-ic">&#129302;</span>AI</button>
+  <button class="sbi" onclick="openTab('style',this)" title="AI stylize"><span class="sbi-ic">&#127917;</span>Stylize</button>
+  <div class="sb-sep"></div>
+  <!-- 6. Templates -->
+  <button class="sbi" onclick="openTab('templates',this)" title="Templates"><span class="sbi-ic">&#128209;</span>Templates</button>
+  <button class="sbi" onclick="openTab('brand',this)" title="Brand kit"><span class="sbi-ic">&#127381;</span>Brand</button>
 </div>
 
-<!-- TOOL PANEL -->
+<!-- ── TOOL PANEL ─────────────────────────────────── -->
 <div class="pnl" id="pnl">
   <div class="pnlh"><span id="pnl-title">Tool</span><button class="pnlx" onclick="closeTab()">&#215;</button></div>
   <div class="pnlb">
 
-    <!-- MEDIA -->
+    <!-- ════ 1. MEDIA ════ -->
     <div class="tab" id="tab-media">
-      <button class="btn" onclick="pickFile()">+ Import Video / Image</button>
-      <div style="background:var(--s2);border:2px dashed var(--bd);border-radius:9px;padding:20px;text-align:center;color:var(--mu);font-size:12px">Drag &amp; drop onto the preview</div>
-      <div id="src-box" class="rbox" style="display:none"><div class="rlbl">Source</div><a id="src-link" href="#" target="_blank" style="color:var(--al);font-size:11px">View in Drive &#8599;</a></div>
+      <button class="btn" onclick="pickFile('video/*,image/*')">&#128249; Import Video / Image</button>
+      <button class="btn gy" onclick="pickFile('audio/*')" style="margin-top:4px">&#9836; Import Audio</button>
+      <div style="margin-top:10px;background:var(--s2);border:2px dashed var(--bd);border-radius:9px;padding:16px;text-align:center;color:var(--mu);font-size:11px">
+        Drop files here or click above
+      </div>
+      <div id="src-box" class="rbox" style="display:none">
+        <div class="rlbl">Imported</div>
+        <div id="src-name" style="font-size:11px;color:var(--tx);word-break:break-all"></div>
+        <a id="src-link" href="#" target="_blank" style="color:var(--al);font-size:11px;display:none">View in Drive &#8599;</a>
+      </div>
     </div>
 
-    <!-- TEXT -->
-    <div class="tab" id="tab-text">
-      <div class="lbl">Content</div>
-      <input class="inp" id="txt-inp" placeholder="Your title or caption&#8230;"/>
-      <div class="lbl">Size</div>
-      <div class="slr"><input type="range" min="12" max="80" value="36" oninput="document.getElementById('tsz').textContent=this.value+'px'"/><span class="slv" id="tsz">36px</span></div>
-      <div class="lbl">Position</div>
+    <!-- ════ TRIM ════ -->
+    <div class="tab" id="tab-trim">
+      <div class="lbl">Clip Actions</div>
+      <div class="g2">
+        <button class="op" onclick="splitClip()">&#9986; Split at head</button>
+        <button class="op" onclick="delClip()">&#128465; Delete clip</button>
+      </div>
+      <div class="lbl" style="margin-top:10px">Trim In / Out</div>
+      <div style="font-size:11px;color:var(--mu);margin-bottom:6px">Drag the clip edges on the timeline to trim</div>
+      <div class="lbl">In Point</div>
+      <div class="slr"><input type="range" min="0" max="100" value="0" id="trim-in" oninput="onTrimIn(this.value)"/><span class="slv" id="trim-in-v">0s</span></div>
+      <div class="lbl">Out Point</div>
+      <div class="slr"><input type="range" min="0" max="100" value="100" id="trim-out" oninput="onTrimOut(this.value)"/><span class="slv" id="trim-out-v">—</span></div>
+      <button class="btn" onclick="showToast('Clip trimmed','tok')">Apply Trim</button>
+      <div class="lbl" style="margin-top:12px">Reorder</div>
+      <div style="font-size:11px;color:var(--mu)">Drag clips left/right on the timeline to reorder</div>
+    </div>
+
+    <!-- ════ CROP / ROTATE / RESIZE ════ -->
+    <div class="tab" id="tab-crop">
+      <div class="lbl">Rotate</div>
+      <div class="g4">
+        <button class="op" onclick="showToast('Rotated -90°','tok')">-90°</button>
+        <button class="op" onclick="showToast('Rotated +90°','tok')">+90°</button>
+        <button class="op" onclick="showToast('Flipped H','tok')">Flip H</button>
+        <button class="op" onclick="showToast('Flipped V','tok')">Flip V</button>
+      </div>
+      <div class="lbl">Scale</div>
+      <div class="slr"><input type="range" min="50" max="200" value="100" oninput="document.getElementById('sc-v').textContent=this.value+'%';applyTransform()"/><span class="slv" id="sc-v">100%</span></div>
+      <div class="lbl">Position X</div>
+      <div class="slr"><input type="range" min="-100" max="100" value="0" oninput="document.getElementById('px-v').textContent=this.value;applyTransform()"/><span class="slv" id="px-v">0</span></div>
+      <div class="lbl">Position Y</div>
+      <div class="slr"><input type="range" min="-100" max="100" value="0" oninput="document.getElementById('py-v').textContent=this.value;applyTransform()"/><span class="slv" id="py-v">0</span></div>
+      <div class="lbl">Crop (Zoom In)</div>
+      <div class="slr"><input type="range" min="0" max="50" value="0" oninput="document.getElementById('cr-v').textContent=this.value+'%';applyCrop(this.value)"/><span class="slv" id="cr-v">0%</span></div>
+      <button class="btn" onclick="showToast('Transform applied to render','tok')">Apply to Render</button>
+    </div>
+
+    <!-- ════ SPEED ════ -->
+    <div class="tab" id="tab-speed">
+      <div class="lbl">Speed</div>
+      <div class="sps">
+        <button class="spb" onclick="pickSpeed(this)" data-sp="0.1">0.1x</button>
+        <button class="spb" onclick="pickSpeed(this)" data-sp="0.25">0.25x</button>
+        <button class="spb" onclick="pickSpeed(this)" data-sp="0.5">0.5x</button>
+        <button class="spb" onclick="pickSpeed(this)" data-sp="0.75">0.75x</button>
+        <button class="spb on" onclick="pickSpeed(this)" data-sp="1">1x</button>
+        <button class="spb" onclick="pickSpeed(this)" data-sp="1.5">1.5x</button>
+        <button class="spb" onclick="pickSpeed(this)" data-sp="2">2x</button>
+        <button class="spb" onclick="pickSpeed(this)" data-sp="3">3x</button>
+        <button class="spb" onclick="pickSpeed(this)" data-sp="4">4x</button>
+      </div>
+      <div class="lbl" style="margin-top:10px">Custom Speed</div>
+      <div class="slr"><input type="range" min="1" max="800" value="100" oninput="onSpeedSlider(this.value)"/><span class="slv" id="spd-v">1x</span></div>
+      <div class="lbl">Speed Ramp</div>
       <div class="g3">
-        <button class="op" onclick="pick(this,'pos-g')">Top</button>
-        <button class="op on" onclick="pick(this,'pos-g')">Center</button>
-        <button class="op" onclick="pick(this,'pos-g')">Bottom</button>
+        <button class="op" onclick="showToast('Ease-in ramp added to render','tok')">Ease In</button>
+        <button class="op" onclick="showToast('Ease-out ramp added to render','tok')">Ease Out</button>
+        <button class="op" onclick="showToast('Both ramps added to render','tok')">Both</button>
       </div>
-      <div class="lbl">Style</div>
-      <div class="g3">
-        <button class="op on" onclick="pick(this,'sty-g')">Plain</button>
-        <button class="op" onclick="pick(this,'sty-g')">Shadow</button>
-        <button class="op" onclick="pick(this,'sty-g')">Outline</button>
+      <div class="lbl">Slow Motion Effect</div>
+      <div class="g2">
+        <button class="op" onclick="pickSpeed2(this,0.25)">Super Slow (0.25x)</button>
+        <button class="op" onclick="pickSpeed2(this,0.5)">Slow Mo (0.5x)</button>
       </div>
-      <button class="btn" id="txt-add-btn" onclick="addTextClip()">Add to Timeline</button>
-      <button class="btn" id="txt-upd-btn" onclick="updateTextClip()" style="display:none;background:#059669">Update Text</button>
-      <button class="btn" id="txt-del-btn" onclick="deleteTextClip()" style="display:none;background:#dc2626">Delete Text</button>
-      <div id="txt-editing" style="display:none;font-size:11px;color:var(--al);text-align:center;padding:4px">Editing selected clip</div>
+      <button class="btn" style="margin-top:10px" onclick="applySpeed()">Apply Speed</button>
     </div>
 
-    <!-- AUDIO -->
-    <div class="tab" id="tab-audio">
-      <input class="inp" id="aud-q" placeholder="Search music &amp; SFX&#8230;" oninput="filterAudio()"/>
-      <div id="aud-list" style="display:flex;flex-direction:column;gap:6px;max-height:360px;overflow-y:auto">
-        <p style="color:var(--mu);font-size:12px;text-align:center;padding:20px">Loading&#8230;</p>
-      </div>
-    </div>
-
-    <!-- CAPTIONS -->
-    <div class="tab" id="tab-captions">
-      <p style="font-size:12px;color:var(--mu);line-height:1.55">Whisper AI transcribes your video into timed subtitles.</p>
-      <div class="lbl">Language</div>
-      <select class="sel" id="cap-lang">
-        <option value="en">English</option><option value="ar">Arabic</option>
-        <option value="fr">French</option><option value="es">Spanish</option>
-        <option value="de">German</option><option value="ja">Japanese</option>
-      </select>
-      <button class="btn" id="cap-btn" onclick="runAI('captions')">Generate Captions</button>
-      <div id="cap-res" class="rbox" style="display:none">
-        <div class="rlbl">Preview</div>
-        <pre id="cap-pre" style="font-size:10px;color:var(--mu);white-space:pre-wrap;max-height:140px;overflow-y:auto"></pre>
-      </div>
-    </div>
-
-    <!-- EFFECTS -->
+    <!-- ════ 2. EFFECTS ════ -->
     <div class="tab" id="tab-effects">
-      <div class="lbl">Effect</div>
-      <div class="g3" id="efx-g">
-        <button class="op" onclick="pickEfx(this)">Glow</button>
-        <button class="op" onclick="pickEfx(this)">Grain</button>
-        <button class="op" onclick="pickEfx(this)">Blur</button>
+      <div class="lbl">Motion</div>
+      <div class="g3">
+        <button class="op" onclick="pickEfx(this)">Shake</button>
+        <button class="op" onclick="pickEfx(this)">Zoom In</button>
+        <button class="op" onclick="pickEfx(this)">Zoom Out</button>
+        <button class="op" onclick="pickEfx(this)">Pan Left</button>
+        <button class="op" onclick="pickEfx(this)">Pan Right</button>
+        <button class="op" onclick="pickEfx(this)">Tilt</button>
+      </div>
+      <div class="lbl">Cinematic</div>
+      <div class="g3">
+        <button class="op" onclick="pickEfx(this)">Cinematic</button>
+        <button class="op" onclick="pickEfx(this)">Film Grain</button>
         <button class="op" onclick="pickEfx(this)">Vignette</button>
+        <button class="op" onclick="pickEfx(this)">Blur</button>
+        <button class="op" onclick="pickEfx(this)">Bokeh</button>
+        <button class="op" onclick="pickEfx(this)">Lens Flare</button>
+      </div>
+      <div class="lbl">Glitch / Energy</div>
+      <div class="g3">
         <button class="op" onclick="pickEfx(this)">Glitch</button>
         <button class="op" onclick="pickEfx(this)">Flash</button>
-        <button class="op" onclick="pickEfx(this)">Shake</button>
-        <button class="op" onclick="pickEfx(this)">Bokeh</button>
+        <button class="op" onclick="pickEfx(this)">Strobe</button>
+        <button class="op" onclick="pickEfx(this)">Neon Glow</button>
         <button class="op" onclick="pickEfx(this)">Retro</button>
-        <button class="op" onclick="pickEfx(this)">Neon</button>
-        <button class="op" onclick="pickEfx(this)">Lens</button>
         <button class="op" onclick="pickEfx(this)">Dust</button>
       </div>
       <div class="lbl">Intensity</div>
       <div class="slr"><input type="range" min="0" max="100" value="50" oninput="document.getElementById('efxv').textContent=this.value+'%'"/><span class="slv" id="efxv">50%</span></div>
-      <button class="btn" onclick="showToast('Effect queued for render','tok')">Apply to Render</button>
+      <button class="btn" onclick="showToast('Effect queued for Shotstack render','tok')">Apply to Render</button>
     </div>
 
-    <!-- FILTER -->
+    <!-- ════ FILTER / COLOR ════ -->
     <div class="tab" id="tab-filter">
       <div class="lbl">Preset</div>
       <div class="fg">
-        <div class="fo on" onclick="pickFilter(this)"><div class="ft" style="background:#1a1a2e">None</div></div>
+        <div class="fo on" onclick="pickFilter(this)"><div class="ft" style="background:#111">None</div></div>
         <div class="fo" onclick="pickFilter(this)"><div class="ft" style="background:linear-gradient(135deg,#b45309,#92400e)">Warm</div></div>
         <div class="fo" onclick="pickFilter(this)"><div class="ft" style="background:linear-gradient(135deg,#1d4ed8,#0e7490)">Cool</div></div>
-        <div class="fo" onclick="pickFilter(this)"><div class="ft" style="background:linear-gradient(135deg,#374151,#1f2937)">B&amp;W</div></div>
+        <div class="fo" onclick="pickFilter(this)"><div class="ft" style="background:#2a2a2a">B&amp;W</div></div>
         <div class="fo" onclick="pickFilter(this)"><div class="ft" style="background:linear-gradient(135deg,#6b7280,#9ca3af)">Fade</div></div>
         <div class="fo" onclick="pickFilter(this)"><div class="ft" style="background:linear-gradient(135deg,#7c3aed,#db2777)">Vivid</div></div>
+        <div class="fo" onclick="pickFilter(this)"><div class="ft" style="background:linear-gradient(135deg,#064e3b,#065f46)">Forest</div></div>
+        <div class="fo" onclick="pickFilter(this)"><div class="ft" style="background:linear-gradient(135deg,#7f1d1d,#991b1b)">Sunset</div></div>
+        <div class="fo" onclick="pickFilter(this)"><div class="ft" style="background:linear-gradient(135deg,#312e81,#1e1b4b)">Moody</div></div>
       </div>
       <div class="lbl">Brightness</div><div class="slr"><input type="range" min="-100" max="100" value="0" oninput="this.nextElementSibling.textContent=this.value"/><span class="slv">0</span></div>
       <div class="lbl">Contrast</div><div class="slr"><input type="range" min="-100" max="100" value="0" oninput="this.nextElementSibling.textContent=this.value"/><span class="slv">0</span></div>
@@ -260,76 +394,222 @@ body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg
       <div class="lbl">Temperature</div><div class="slr"><input type="range" min="-100" max="100" value="0" oninput="this.nextElementSibling.textContent=this.value"/><span class="slv">0</span></div>
       <div class="lbl">Highlights</div><div class="slr"><input type="range" min="-100" max="100" value="0" oninput="this.nextElementSibling.textContent=this.value"/><span class="slv">0</span></div>
       <div class="lbl">Shadows</div><div class="slr"><input type="range" min="-100" max="100" value="0" oninput="this.nextElementSibling.textContent=this.value"/><span class="slv">0</span></div>
-      <button class="btn" onclick="showToast('Color grade applied','tok')">Apply to Render</button>
+      <div class="lbl">Sharpness</div><div class="slr"><input type="range" min="0" max="100" value="0" oninput="this.nextElementSibling.textContent=this.value"/><span class="slv">0</span></div>
+      <button class="btn" onclick="showToast('Color grade applied to render','tok')">Apply to Render</button>
     </div>
 
-    <!-- TRANSITIONS -->
+    <!-- ════ TRANSITIONS ════ -->
     <div class="tab" id="tab-trans">
       <div class="lbl">Type</div>
       <div class="tg">
         <div class="to on" onclick="pickTrans(this)">&#124; Cut</div>
         <div class="to" onclick="pickTrans(this)">&#9681; Fade</div>
-        <div class="to" onclick="pickTrans(this)">&#10824; Dissolve</div>
-        <div class="to" onclick="pickTrans(this)">&#8594; Slide</div>
+        <div class="to" onclick="pickTrans(this)">&#9685; Dissolve</div>
+        <div class="to" onclick="pickTrans(this)">&#8594; Slide Left</div>
+        <div class="to" onclick="pickTrans(this)">&#8592; Slide Right</div>
+        <div class="to" onclick="pickTrans(this)">&#8593; Slide Up</div>
+        <div class="to" onclick="pickTrans(this)">&#8595; Slide Down</div>
+        <div class="to" onclick="pickTrans(this)">&#8853; Zoom In</div>
         <div class="to" onclick="pickTrans(this)">&#9655; Wipe</div>
-        <div class="to" onclick="pickTrans(this)">&#8853; Zoom</div>
+        <div class="to" onclick="pickTrans(this)">&#9670; Spin</div>
+        <div class="to" onclick="pickTrans(this)">&#9632; Blur</div>
+        <div class="to" onclick="pickTrans(this)">&#10022; Glitch</div>
       </div>
       <div class="lbl">Duration</div>
       <div class="slr"><input type="range" min="1" max="30" value="5" oninput="document.getElementById('trdv').textContent=(this.value/10).toFixed(1)+'s'"/><span class="slv" id="trdv">0.5s</span></div>
-      <button class="btn" onclick="showToast('Transition applied','tok')">Apply Transition</button>
+      <button class="btn" onclick="showToast('Transition applied between clips','tok')">Apply Transition</button>
     </div>
 
-    <!-- SPEED -->
-    <div class="tab" id="tab-speed">
-      <div class="lbl">Speed</div>
-      <div class="sps">
-        <div class="sp" onclick="pickSpeed(this)" data-sp="0.25">0.25x</div>
-        <div class="sp" onclick="pickSpeed(this)" data-sp="0.5">0.5x</div>
-        <div class="sp" onclick="pickSpeed(this)" data-sp="0.75">0.75x</div>
-        <div class="sp on" onclick="pickSpeed(this)" data-sp="1">1x</div>
-        <div class="sp" onclick="pickSpeed(this)" data-sp="1.5">1.5x</div>
-        <div class="sp" onclick="pickSpeed(this)" data-sp="2">2x</div>
-        <div class="sp" onclick="pickSpeed(this)" data-sp="4">4x</div>
+    <!-- ════ CHROMA KEY ════ -->
+    <div class="tab" id="tab-chroma">
+      <p style="font-size:11px;color:var(--mu);line-height:1.5;margin-bottom:8px">Remove a color (green/blue screen) from your clip and replace the background.</p>
+      <div class="lbl">Key Color</div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+        <div class="ck-swatch" style="background:#00ff00" onclick="selectChromaColor('#00ff00',this)" id="ck-swatch" title="Click to pick color"></div>
+        <span style="font-size:11px;color:var(--mu)">Click swatch to pick</span>
+        <input type="color" id="ck-color" value="#00ff00" style="opacity:0;position:absolute" onchange="syncCkColor(this.value)"/>
       </div>
-      <div class="lbl" style="margin-top:10px">Speed Ramp</div>
+      <div class="lbl">Presets</div>
       <div class="g3">
-        <button class="op" onclick="showToast('Ease-in ramp added','tok')">Ease In</button>
-        <button class="op" onclick="showToast('Ease-out ramp added','tok')">Ease Out</button>
-        <button class="op" onclick="showToast('Both ramps added','tok')">Both</button>
+        <button class="op" onclick="selectChromaColor('#00b140',null)">Green</button>
+        <button class="op" onclick="selectChromaColor('#0047ab',null)">Blue</button>
+        <button class="op" onclick="selectChromaColor('#ff0000',null)">Red</button>
       </div>
-      <button class="btn" style="margin-top:10px" onclick="applySpeed()">Apply Speed</button>
+      <div class="lbl">Similarity</div>
+      <div class="slr"><input type="range" min="0" max="100" value="40" oninput="this.nextElementSibling.textContent=this.value+'%'"/><span class="slv">40%</span></div>
+      <div class="lbl">Smoothness</div>
+      <div class="slr"><input type="range" min="0" max="100" value="10" oninput="this.nextElementSibling.textContent=this.value+'%'"/><span class="slv">10%</span></div>
+      <div class="lbl">Spill Reduction</div>
+      <div class="slr"><input type="range" min="0" max="100" value="20" oninput="this.nextElementSibling.textContent=this.value+'%'"/><span class="slv">20%</span></div>
+      <button class="btn" onclick="showToast('Chroma key queued for Shotstack render','tok')">Apply to Render</button>
     </div>
 
-    <!-- BG REMOVAL -->
+    <!-- ════ PICTURE IN PICTURE ════ -->
+    <div class="tab" id="tab-pip">
+      <p style="font-size:11px;color:var(--mu);line-height:1.5;margin-bottom:8px">Overlay a second video or image on top of your main clip.</p>
+      <button class="btn" onclick="enablePip()">+ Import Overlay Media</button>
+      <div class="lbl">Size</div>
+      <div class="slr"><input type="range" min="10" max="80" value="30" id="pip-size" oninput="document.getElementById('pip-size-v').textContent=this.value+'%';updatePip()"/><span class="slv" id="pip-size-v">30%</span></div>
+      <div class="lbl">Position</div>
+      <div class="g4">
+        <button class="op" onclick="setPipPos('tl')">Top L</button>
+        <button class="op" onclick="setPipPos('tr')">Top R</button>
+        <button class="op" onclick="setPipPos('bl')">Bot L</button>
+        <button class="op on" onclick="setPipPos('br')">Bot R</button>
+      </div>
+      <div class="lbl">Opacity</div>
+      <div class="slr"><input type="range" min="10" max="100" value="100" oninput="document.getElementById('pip-op-v').textContent=this.value+'%'"/><span class="slv" id="pip-op-v">100%</span></div>
+      <button class="btn" onclick="showToast('PiP applied to render','tok')" style="margin-top:10px">Apply to Render</button>
+    </div>
+
+    <!-- ════ BG REMOVAL (AI) ════ -->
     <div class="tab" id="tab-bg">
-      <p style="font-size:12px;color:var(--mu);line-height:1.55">AI removes background from your source image (Replicate rembg).</p>
+      <p style="font-size:11px;color:var(--mu);line-height:1.5;margin-bottom:8px">AI (Replicate rembg) removes background from your image or video frame.</p>
+      <div class="ai-status" id="bg-status"><div class="ai-spinner"></div><span>Processing with AI...</span></div>
       <button class="btn" id="bg-btn" onclick="runAI('bg')">Remove Background</button>
       <div id="bg-res" class="rbox" style="display:none">
         <div class="rlbl">Result</div>
         <img id="bg-img" src="" style="width:100%;border-radius:6px;margin-top:4px"/>
+        <a id="bg-link" href="#" target="_blank" style="display:block;font-size:10px;color:var(--al);margin-top:4px">Download &#8599;</a>
       </div>
     </div>
 
-    <!-- STYLIZE -->
-    <div class="tab" id="tab-style">
-      <p style="font-size:12px;color:var(--mu);line-height:1.55">Transform your video with AI style via Replicate.</p>
+    <!-- ════ 3. TEXT ════ -->
+    <div class="tab" id="tab-text">
+      <div class="lbl">Content</div>
+      <input class="inp" id="txt-inp" placeholder="Your title or caption..."/>
+      <div class="lbl">Font Size</div>
+      <div class="slr"><input type="range" min="12" max="100" value="36" oninput="document.getElementById('tsz').textContent=this.value+'px';previewText()"/><span class="slv" id="tsz">36px</span></div>
+      <div class="lbl">Font Weight</div>
+      <div class="g3">
+        <button class="op" onclick="pick(this)">Light</button>
+        <button class="op on" onclick="pick(this)">Regular</button>
+        <button class="op" onclick="pick(this)">Bold</button>
+      </div>
+      <div class="lbl">Position</div>
+      <div class="g3">
+        <button class="op" onclick="pick(this)">Top</button>
+        <button class="op on" onclick="pick(this)">Center</button>
+        <button class="op" onclick="pick(this)">Bottom</button>
+      </div>
       <div class="lbl">Style</div>
       <div class="g3">
-        <button class="op on" onclick="pickStyleOpt(this)" data-s="anime">Anime</button>
-        <button class="op" onclick="pickStyleOpt(this)" data-s="3d">3D</button>
-        <button class="op" onclick="pickStyleOpt(this)" data-s="neon">Neon</button>
+        <button class="op on" onclick="pick(this)">Plain</button>
+        <button class="op" onclick="pick(this)">Shadow</button>
+        <button class="op" onclick="pick(this)">Outline</button>
       </div>
-      <button class="btn" id="style-btn" onclick="runAI('style')">Apply Style</button>
-      <div id="style-res" class="rbox" style="display:none">
-        <div class="rlbl">Stylized</div>
-        <video id="style-vid" controls style="width:100%;border-radius:6px"></video>
+      <div class="lbl">Animation</div>
+      <div class="g3">
+        <button class="op on" onclick="pick(this)">None</button>
+        <button class="op" onclick="pick(this)">Fade In</button>
+        <button class="op" onclick="pick(this)">Slide Up</button>
+        <button class="op" onclick="pick(this)">Typewrite</button>
+        <button class="op" onclick="pick(this)">Pop</button>
+        <button class="op" onclick="pick(this)">Wave</button>
+      </div>
+      <div class="lbl">Color</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <div style="width:24px;height:24px;border-radius:4px;background:#fff;cursor:pointer;border:2px solid var(--al)" onclick="setTextColor('#fff')"></div>
+        <div style="width:24px;height:24px;border-radius:4px;background:#000;cursor:pointer;border:2px solid transparent" onclick="setTextColor('#000')"></div>
+        <div style="width:24px;height:24px;border-radius:4px;background:#a78bfa;cursor:pointer;border:2px solid transparent" onclick="setTextColor('#a78bfa')"></div>
+        <div style="width:24px;height:24px;border-radius:4px;background:#f59e0b;cursor:pointer;border:2px solid transparent" onclick="setTextColor('#f59e0b')"></div>
+        <div style="width:24px;height:24px;border-radius:4px;background:#22c55e;cursor:pointer;border:2px solid transparent" onclick="setTextColor('#22c55e')"></div>
+        <div style="width:24px;height:24px;border-radius:4px;background:#ef4444;cursor:pointer;border:2px solid transparent" onclick="setTextColor('#ef4444')"></div>
+        <input type="color" value="#ffffff" style="width:24px;height:24px;border-radius:4px;border:none;cursor:pointer;padding:0" onchange="setTextColor(this.value)"/>
+      </div>
+      <button class="btn" id="txt-add-btn" onclick="addTextClip()">Add to Timeline</button>
+      <button class="btn gn" id="txt-upd-btn" onclick="updateTextClip()" style="display:none">Update Text</button>
+      <button class="btn rd" id="txt-del-btn" onclick="deleteTextClip()" style="display:none">Delete Text</button>
+    </div>
+
+    <!-- ════ CAPTIONS (AI) ════ -->
+    <div class="tab" id="tab-captions">
+      <p style="font-size:11px;color:var(--mu);line-height:1.5;margin-bottom:8px">Whisper AI transcribes your video into timed subtitles automatically.</p>
+      <div class="lbl">Language</div>
+      <select class="sel" id="cap-lang">
+        <option value="en">English</option>
+        <option value="ar">Arabic</option>
+        <option value="fr">French</option>
+        <option value="es">Spanish</option>
+        <option value="de">German</option>
+        <option value="ja">Japanese</option>
+        <option value="ko">Korean</option>
+        <option value="zh">Chinese</option>
+        <option value="pt">Portuguese</option>
+        <option value="it">Italian</option>
+      </select>
+      <div class="ai-status" id="cap-status"><div class="ai-spinner"></div><span>Generating captions...</span></div>
+      <button class="btn" id="cap-btn" onclick="runAI('captions')">Generate Auto-Captions</button>
+      <div id="cap-res" class="rbox" style="display:none">
+        <div class="rlbl">Subtitles (SRT)</div>
+        <textarea class="ta" id="cap-pre" style="height:120px;font-size:10px;font-family:monospace"></textarea>
+        <button class="btn gy" onclick="downloadSRT()" style="margin-top:4px">Download .SRT</button>
+        <button class="btn" onclick="applySubsToTimeline()" style="margin-top:4px">Apply to Timeline</button>
+      </div>
+      <div class="lbl" style="margin-top:10px">Caption Style</div>
+      <div class="g3">
+        <button class="op on" onclick="pick(this)">White</button>
+        <button class="op" onclick="pick(this)">Yellow</button>
+        <button class="op" onclick="pick(this)">Boxed</button>
       </div>
     </div>
 
-    <!-- VOICE -->
+    <!-- ════ STICKERS ════ -->
+    <div class="tab" id="tab-stickers">
+      <div class="lbl">Emoji & Stickers</div>
+      <div class="stk-grid" id="stk-grid">
+        <div class="stk" onclick="addSticker(this)">&#128293;</div>
+        <div class="stk" onclick="addSticker(this)">&#10084;</div>
+        <div class="stk" onclick="addSticker(this)">&#127775;</div>
+        <div class="stk" onclick="addSticker(this)">&#128514;</div>
+        <div class="stk" onclick="addSticker(this)">&#128079;</div>
+        <div class="stk" onclick="addSticker(this)">&#127881;</div>
+        <div class="stk" onclick="addSticker(this)">&#9889;</div>
+        <div class="stk" onclick="addSticker(this)">&#128640;</div>
+        <div class="stk" onclick="addSticker(this)">&#127926;</div>
+        <div class="stk" onclick="addSticker(this)">&#128149;</div>
+        <div class="stk" onclick="addSticker(this)">&#127942;</div>
+        <div class="stk" onclick="addSticker(this)">&#128064;</div>
+        <div class="stk" onclick="addSticker(this)">&#128525;</div>
+        <div class="stk" onclick="addSticker(this)">&#128170;</div>
+        <div class="stk" onclick="addSticker(this)">&#127796;</div>
+        <div class="stk" onclick="addSticker(this)">&#9731;</div>
+        <div class="stk" onclick="addSticker(this)">&#128048;</div>
+        <div class="stk" onclick="addSticker(this)">&#127802;</div>
+        <div class="stk" onclick="addSticker(this)">&#128016;</div>
+        <div class="stk" onclick="addSticker(this)">&#9829;</div>
+        <div class="stk" onclick="addSticker(this)">&#128123;</div>
+        <div class="stk" onclick="addSticker(this)">&#127970;</div>
+        <div class="stk" onclick="addSticker(this)">&#128081;</div>
+        <div class="stk" onclick="addSticker(this)">&#127752;</div>
+      </div>
+      <div class="lbl" style="margin-top:10px">Size</div>
+      <div class="slr"><input type="range" min="20" max="120" value="48" oninput="document.getElementById('stk-sz-v').textContent=this.value+'px'"/><span class="slv" id="stk-sz-v">48px</span></div>
+    </div>
+
+    <!-- ════ 4. AUDIO ════ -->
+    <div class="tab" id="tab-audio">
+      <input class="inp" id="aud-q" placeholder="Search music &amp; SFX..." oninput="filterAudio()"/>
+      <div id="aud-list" style="display:flex;flex-direction:column;gap:5px;max-height:300px;overflow-y:auto;margin-top:8px">
+        <p style="color:var(--mu);font-size:11px;text-align:center;padding:20px">Loading library...</p>
+      </div>
+      <div class="lbl" style="margin-top:10px">Volume</div>
+      <div class="slr"><input type="range" min="0" max="100" value="80" oninput="document.getElementById('aud-vol-v').textContent=this.value+'%';setAudioVol(this.value)"/><span class="slv" id="aud-vol-v">80%</span></div>
+      <div class="lbl">Fade</div>
+      <div class="g2">
+        <button class="op" onclick="showToast('Fade in applied','tok')">Fade In</button>
+        <button class="op" onclick="showToast('Fade out applied','tok')">Fade Out</button>
+      </div>
+      <div class="lbl">Noise Reduction</div>
+      <div class="slr"><input type="range" min="0" max="100" value="0" oninput="this.nextElementSibling.textContent=this.value+'%'"/><span class="slv">0%</span></div>
+      <div class="lbl">Beat Sync</div>
+      <button class="btn gy" onclick="showToast('Beat detection requires audio upload — coming soon','twrn')" style="margin-top:4px">Auto Beat Sync</button>
+    </div>
+
+    <!-- ════ TTS VOICE ════ -->
     <div class="tab" id="tab-tts">
       <div class="lbl">Script</div>
-      <textarea class="ta" id="tts-txt" placeholder="Type your voiceover script&#8230;"></textarea>
+      <textarea class="ta" id="tts-txt" placeholder="Type your voiceover script..."></textarea>
       <div class="lbl">Voice</div>
       <div class="g2">
         <div class="op" onclick="pickVoice(this)" data-v="alloy">alloy</div>
@@ -339,39 +619,147 @@ body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg
         <div class="op on" onclick="pickVoice(this)" data-v="nova">nova</div>
         <div class="op" onclick="pickVoice(this)" data-v="shimmer">shimmer</div>
       </div>
+      <div class="lbl">Speed</div>
+      <div class="slr"><input type="range" min="50" max="200" value="100" oninput="document.getElementById('tts-sp-v').textContent=(this.value/100).toFixed(1)+'x'"/><span class="slv" id="tts-sp-v">1.0x</span></div>
+      <div class="ai-status" id="tts-status"><div class="ai-spinner"></div><span>Generating voiceover...</span></div>
       <button class="btn" id="tts-btn" onclick="runAI('tts')">Generate Voiceover</button>
       <div id="tts-res" class="rbox" style="display:none">
         <div class="rlbl">Voiceover</div>
         <audio id="tts-aud" controls style="width:100%;height:30px;margin-top:4px"></audio>
+        <button class="btn gy" onclick="addTtsToTimeline()" style="margin-top:4px">Add to Timeline</button>
       </div>
     </div>
 
-  </div>
-</div>
+    <!-- ════ 5. AI TOOLS ════ -->
+    <div class="tab" id="tab-ai">
+      <div class="lbl">AI Features</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <button class="op" style="padding:8px;text-align:left" onclick="openTab('captions',null);showToast('Switched to Captions','tinf')">&#127908; Auto-Captions (Whisper)</button>
+        <button class="op" style="padding:8px;text-align:left" onclick="openTab('bg',null);showToast('Switched to BG Removal','tinf')">&#9988; Background Removal (Replicate)</button>
+        <button class="op" style="padding:8px;text-align:left" onclick="openTab('style',null);showToast('Switched to Stylize','tinf')">&#127917; Video Stylization (Anime / 3D / Neon)</button>
+        <button class="op" style="padding:8px;text-align:left" onclick="openTab('tts',null);showToast('Switched to Voice','tinf')">&#127908; Text-to-Speech Voiceover</button>
+        <button class="op" style="padding:8px;text-align:left" onclick="showToast('Auto-reframe: set aspect ratio above, then export','tinf')">&#8693; Auto-Reframe (via Shotstack)</button>
+        <button class="op" style="padding:8px;text-align:left" onclick="showToast('Upscaling applied in Shotstack render','tinf')">&#11014; Video Upscaling (1080p &rarr; 4K)</button>
+        <button class="op" style="padding:8px;text-align:left" onclick="showToast('Smart highlights: coming soon','twrn')">&#127775; Smart Highlight Clips (beta)</button>
+        <button class="op" style="padding:8px;text-align:left" onclick="showToast('Lip-sync dubbing: coming soon','twrn')">&#127757; Translation &amp; Lip-Sync (beta)</button>
+      </div>
+    </div>
 
-<!-- CENTER -->
+    <!-- ════ STYLIZE (AI) ════ -->
+    <div class="tab" id="tab-style">
+      <p style="font-size:11px;color:var(--mu);line-height:1.5;margin-bottom:8px">Transform your video with an AI art style via Replicate.</p>
+      <div class="lbl">Style</div>
+      <div class="g3">
+        <button class="op on" onclick="pickStyleOpt(this)" data-s="anime">&#127912; Anime</button>
+        <button class="op" onclick="pickStyleOpt(this)" data-s="3d">&#127919; 3D</button>
+        <button class="op" onclick="pickStyleOpt(this)" data-s="neon">&#9889; Neon</button>
+      </div>
+      <div class="lbl" style="margin-top:10px">Strength</div>
+      <div class="slr"><input type="range" min="10" max="100" value="70" oninput="document.getElementById('style-str-v').textContent=this.value+'%'"/><span class="slv" id="style-str-v">70%</span></div>
+      <div class="ai-status" id="style-status"><div class="ai-spinner"></div><span>Stylizing with AI...</span></div>
+      <button class="btn" id="style-btn" onclick="runAI('style')">Apply Style</button>
+      <div id="style-res" class="rbox" style="display:none">
+        <div class="rlbl">Stylized Preview</div>
+        <video id="style-vid" controls style="width:100%;border-radius:6px"></video>
+      </div>
+    </div>
+
+    <!-- ════ 6. TEMPLATES ════ -->
+    <div class="tab" id="tab-templates">
+      <div class="lbl">Trending Templates</div>
+      <div class="tmpl-grid">
+        <div class="tmpl" onclick="applyTemplate('travel')">
+          <div class="tmpl-thumb" style="background:linear-gradient(135deg,#0ea5e9,#7c3aed)">&#9992;</div>
+          <div class="tmpl-label">Travel Vlog</div>
+        </div>
+        <div class="tmpl" onclick="applyTemplate('product')">
+          <div class="tmpl-thumb" style="background:linear-gradient(135deg,#f59e0b,#ef4444)">&#128722;</div>
+          <div class="tmpl-label">Product Reel</div>
+        </div>
+        <div class="tmpl" onclick="applyTemplate('lyric')">
+          <div class="tmpl-thumb" style="background:linear-gradient(135deg,#8b5cf6,#ec4899)">&#9835;</div>
+          <div class="tmpl-label">Lyric Video</div>
+        </div>
+        <div class="tmpl" onclick="applyTemplate('highlights')">
+          <div class="tmpl-thumb" style="background:linear-gradient(135deg,#10b981,#3b82f6)">&#127942;</div>
+          <div class="tmpl-label">Highlights</div>
+        </div>
+        <div class="tmpl" onclick="applyTemplate('slideshow')">
+          <div class="tmpl-thumb" style="background:linear-gradient(135deg,#f43f5e,#fb923c)">&#128247;</div>
+          <div class="tmpl-label">Slideshow</div>
+        </div>
+        <div class="tmpl" onclick="applyTemplate('tutorial')">
+          <div class="tmpl-thumb" style="background:linear-gradient(135deg,#6366f1,#0ea5e9)">&#127891;</div>
+          <div class="tmpl-label">Tutorial</div>
+        </div>
+        <div class="tmpl" onclick="applyTemplate('meme')">
+          <div class="tmpl-thumb" style="background:linear-gradient(135deg,#eab308,#22c55e)">&#128514;</div>
+          <div class="tmpl-label">Meme</div>
+        </div>
+        <div class="tmpl" onclick="applyTemplate('announcement')">
+          <div class="tmpl-thumb" style="background:linear-gradient(135deg,#dc2626,#9333ea)">&#128226;</div>
+          <div class="tmpl-label">Announcement</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ BRAND KIT ════ -->
+    <div class="tab" id="tab-brand">
+      <div class="lbl">Brand Colors</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px" id="bk-colors">
+        <div class="bk-color" style="background:#7c3aed" title="Primary"></div>
+        <div class="bk-color" style="background:#a78bfa" title="Secondary"></div>
+        <div class="bk-color" style="background:#f0f0f8" title="Text"></div>
+        <input type="color" value="#7c3aed" style="width:28px;height:28px;border-radius:50%;border:none;cursor:pointer;padding:0" title="Add color" onchange="addBrandColor(this.value)"/>
+      </div>
+      <div class="lbl">Logo</div>
+      <button class="btn gy" onclick="pickFile('image/*')" style="margin-top:0">Upload Logo</button>
+      <div class="lbl">Brand Font</div>
+      <select class="sel" id="bk-font">
+        <option>System Default</option>
+        <option>Montserrat</option>
+        <option>Roboto</option>
+        <option>Playfair Display</option>
+        <option>Oswald</option>
+        <option>Bebas Neue</option>
+      </select>
+      <div class="lbl">Watermark Position</div>
+      <div class="g4">
+        <button class="op" onclick="pick(this)">TL</button>
+        <button class="op" onclick="pick(this)">TR</button>
+        <button class="op" onclick="pick(this)">BL</button>
+        <button class="op on" onclick="pick(this)">BR</button>
+      </div>
+      <button class="btn" onclick="showToast('Brand kit saved','tok')" style="margin-top:10px">Save Brand Kit</button>
+    </div>
+
+  </div><!-- /pnlb -->
+</div><!-- /pnl -->
+
+<!-- ── CENTER: PREVIEW + PLAYBACK + TIMELINE ─────── -->
 <div class="ctr">
 
   <!-- PREVIEW -->
   <div class="pva" id="pva">
     <div class="pvb r9-16" id="pvb">
       <div class="pve" id="pve">
-        <div style="font-size:40px;opacity:.4">&#127916;</div>
-        <div>No media yet</div>
-        <button class="btn" style="margin-top:8px;width:auto;padding:8px 16px" onclick="pickFile()">+ Import Video</button>
+        <div style="font-size:44px;opacity:.3">&#127916;</div>
+        <div style="font-size:13px">No media yet</div>
+        <button class="btn" style="margin-top:8px;width:auto;padding:8px 18px;font-size:12px" onclick="pickFile('video/*,image/*')">+ Import Video</button>
       </div>
+      <video class="main-vid" id="main-vid" style="display:none"></video>
       <div class="capo" id="capo"></div>
-      <!-- Live text overlays rendered here -->
-      <div id="txt-overlay" style="position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:10px"></div>
+      <div id="txt-overlay"></div>
+      <div class="pip-layer" id="pip-layer">PiP Overlay</div>
     </div>
-    <input type="file" id="file-inp" style="display:none" accept="video/*,image/*" onchange="onFilePick()"/>
+    <input type="file" id="file-inp" style="display:none" accept="video/*,image/*,audio/*" onchange="onFilePick()"/>
   </div>
 
-  <!-- PLAYBACK -->
+  <!-- PLAYBACK BAR -->
   <div class="pb">
-    <button class="pbi" onclick="skipF(-1)">&#9198;</button>
+    <button class="pbi" onclick="skipF(-10)" title="Back 1s">&#9198;</button>
     <button class="pbi pbpl" id="play-btn" onclick="togglePlay()">&#9654;</button>
-    <button class="pbi" onclick="skipF(1)">&#9197;</button>
+    <button class="pbi" onclick="skipF(10)" title="Fwd 1s">&#9197;</button>
     <span class="pbt" id="pb-time">0:00 / 0:00</span>
     <div class="pbp" id="pbp" onclick="seekTo(event)">
       <div class="pbf" id="pbf"></div>
@@ -381,7 +769,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg
       <span style="font-size:13px;color:var(--mu)">&#128266;</span>
       <input type="range" min="0" max="100" value="80" oninput="setVol(this.value)"/>
     </div>
-    <button class="pbac" onclick="splitClip()">&#10004; Split</button>
+    <button class="pbac" onclick="splitClip()">&#9986; Split</button>
     <button class="pbac" onclick="delClip()">&#128465; Del</button>
   </div>
 
@@ -389,407 +777,620 @@ body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg
   <div class="tla">
     <div class="tlh">
       <span class="tll">Timeline</span>
-      <button class="tladd" onclick="pickFile()">+ Add Media</button>
+      <button class="tladd" onclick="pickFile('video/*,image/*')">+ Video/Image</button>
+      <button class="tladd" onclick="pickFile('audio/*')">+ Audio</button>
       <div class="tlzr">
         <button onclick="doZoom(-1)">&#8722;</button>
         <span class="tlzl" id="zl">1x</span>
         <button onclick="doZoom(1)">+</button>
       </div>
     </div>
-    <div class="tlt" id="tlt"></div>
+    <div class="tlt" id="tlt">
+      <div class="tl-track">
+        <span class="tl-lbl">Video</span>
+        <div class="tl-clips" id="tl-video"></div>
+      </div>
+      <div class="tl-track">
+        <span class="tl-lbl">Text</span>
+        <div class="tl-clips" id="tl-text"></div>
+      </div>
+      <div class="tl-track">
+        <span class="tl-lbl">Audio</span>
+        <div class="tl-clips" id="tl-audio"></div>
+      </div>
+    </div>
   </div>
 
 </div><!-- /ctr -->
 </div><!-- /main -->
 
+<!-- ═══ EXPORT MODAL ═══════════════════════════════════════════ -->
+<div class="modal-bg" id="export-modal">
+  <div class="modal" style="position:relative">
+    <button class="mclose" onclick="closeExport()">&#215;</button>
+    <h3>&#8679; Export Video</h3>
+    <div class="mrow">
+      <div class="mlbl">Resolution</div>
+      <div class="mbtns">
+        <button class="mbtn" onclick="pick(this)">720p</button>
+        <button class="mbtn on" onclick="pick(this)">1080p</button>
+        <button class="mbtn" onclick="pick(this)">2K</button>
+        <button class="mbtn" onclick="pick(this)">4K</button>
+      </div>
+    </div>
+    <div class="mrow">
+      <div class="mlbl">Frame Rate</div>
+      <div class="mbtns">
+        <button class="mbtn" onclick="pick(this)">24 FPS</button>
+        <button class="mbtn on" onclick="pick(this)">30 FPS</button>
+        <button class="mbtn" onclick="pick(this)">60 FPS</button>
+      </div>
+    </div>
+    <div class="mrow">
+      <div class="mlbl">Format</div>
+      <div class="mbtns">
+        <button class="mbtn on" onclick="pick(this)">MP4</button>
+        <button class="mbtn" onclick="pick(this)">MOV</button>
+      </div>
+    </div>
+    <div class="mrow">
+      <div class="mlbl">Quality / Compression</div>
+      <div class="slr"><input type="range" min="1" max="10" value="8" oninput="document.getElementById('qual-v').textContent=this.value"/><span class="slv" id="qual-v">8</span></div>
+    </div>
+    <div class="mrow">
+      <div class="mlbl">Watermark</div>
+      <div class="mbtns">
+        <button class="mbtn on" onclick="pick(this)">None</button>
+        <button class="mbtn" onclick="pick(this)">CoreCut</button>
+        <button class="mbtn" onclick="pick(this)">Brand Logo</button>
+      </div>
+    </div>
+    <div class="mrow">
+      <div class="mlbl">Share to</div>
+      <div class="mbtns">
+        <button class="mbtn" onclick="shareToSocial('tiktok')">&#127981; TikTok</button>
+        <button class="mbtn" onclick="shareToSocial('instagram')">&#128247; Instagram</button>
+        <button class="mbtn" onclick="shareToSocial('youtube')">&#9654; YouTube</button>
+        <button class="mbtn" onclick="shareToSocial('whatsapp')">&#128172; WhatsApp</button>
+      </div>
+    </div>
+    <button class="btn" onclick="startRender()" style="margin-top:4px">&#9654; Start Render (Shotstack)</button>
+    <div id="render-status" style="display:none;margin-top:10px;padding:10px;background:var(--s2);border-radius:8px;font-size:12px;color:var(--mu)"></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
-// ── State ─────────────────────────────────────────────────────
 var API = 'https://matrixbh.app.n8n.cloud/webhook';
-var UID = 'guest-user-001';
-var PID = new URLSearchParams(location.search).get('p');
-var project = null, vid = null, playing = false;
-var busy = false, curRatio = '9-16', zoom = 1, selClip = null, totDur = 30;
-var tlV = [], tlA = [], tlT = [], capLines = [], audTracks = [];
-var curSpeed = 1, curVoice = 'nova', curStyle = 'anime';
 
-if (!PID) location.href = '../projects/';
+// ── State ──────────────────────────────────────────────────────
+var PID      = new URLSearchParams(location.search).get('id') || '';
+var vid      = null;
+var playing  = false;
+var rafId    = null;
+var clips    = [];   // {id, type, src, label, dur, start, color}
+var textClips= [];   // {id, text, pos, style, anim, color, size}
+var audClips = [];   // {id, label, src, vol}
+var selClip  = null;
+var selText  = null;
+var zoomLvl  = 1;
+var undoStack= [];
+var redoStack= [];
+var srtData  = [];
+var audLib   = [];
+var curAud   = null;
+var curAudEl = null;
+var pipActive= false;
+var curStyle = 'anime';
+var curVoice = 'nova';
+var textColor= '#ffffff';
+var clipIdCnt= 0;
 
-// ── Utilities ────────────────────────────────────────────────
-function gi(id) { return document.getElementById(id); }
-function fmt(s) { s=s||0; var m=Math.floor(s/60),sc=Math.floor(s%60); return m+':'+(sc<10?'0':'')+sc; }
+// ── Utils ──────────────────────────────────────────────────────
+function gi(id){ return document.getElementById(id); }
+function fmt(s){ s=s||0; var m=Math.floor(s/60),sc=Math.floor(s%60); return m+':'+(sc<10?'0':'')+sc; }
+
 function showToast(msg, cls) {
-  var t = gi('toast'); t.textContent = msg; t.className = 'toast '+(cls||'tok'); t.style.display = 'block';
-  clearTimeout(t._t); t._t = setTimeout(function(){ t.style.display='none'; }, 3500);
-}
-function xhr(method, url, body, ok, fail) {
-  var r = new XMLHttpRequest(); r.open(method, url, true);
-  if (method !== 'GET' && !(body instanceof FormData)) r.setRequestHeader('Content-Type','application/json');
-  r.onload = function() {
-    try { var d = JSON.parse(r.responseText); r.status < 300 ? ok(d) : fail(r.status, d); }
-    catch(e) { r.status < 300 ? ok({}) : fail(r.status, {}); }
-  };
-  r.onerror = function() { fail(0, {}); };
-  r.send(body || null);
+  var t = gi('toast');
+  t.textContent = msg; t.className = 'toast '+(cls||'tok'); t.style.display='block';
+  clearTimeout(t._t); t._t = setTimeout(function(){ t.style.display='none'; }, 3200);
 }
 
-// ── Project load ─────────────────────────────────────────────
+function apiXhr(method, url, body, ok, fail) {
+  var r = new XMLHttpRequest(); r.open(method, url, true);
+  if (body && !(body instanceof FormData)) r.setRequestHeader('Content-Type','application/json');
+  r.onload = function() {
+    try { ok(JSON.parse(r.responseText)); } catch(e) { ok({}); }
+  };
+  r.onerror = function(){ if(fail) fail(); };
+  r.send(body ? (body instanceof FormData ? body : JSON.stringify(body)) : null);
+}
+
+// ── Undo/Redo ──────────────────────────────────────────────────
+function saveUndo() {
+  undoStack.push(JSON.stringify({clips:clips,textClips:textClips,audClips:audClips}));
+  if (undoStack.length > 30) undoStack.shift();
+  redoStack = [];
+}
+function doUndo() {
+  if (!undoStack.length) { showToast('Nothing to undo','tinf'); return; }
+  redoStack.push(JSON.stringify({clips:clips,textClips:textClips,audClips:audClips}));
+  var s = JSON.parse(undoStack.pop());
+  clips=s.clips; textClips=s.textClips; audClips=s.audClips;
+  renderTimeline(); showToast('Undo','tinf');
+}
+function doRedo() {
+  if (!redoStack.length) { showToast('Nothing to redo','tinf'); return; }
+  undoStack.push(JSON.stringify({clips:clips,textClips:textClips,audClips:audClips}));
+  var s = JSON.parse(redoStack.pop());
+  clips=s.clips; textClips=s.textClips; audClips=s.audClips;
+  renderTimeline(); showToast('Redo','tinf');
+}
+
+// ── Project load ───────────────────────────────────────────────
 function loadProject() {
-  xhr('GET', API+'/app-project-detail?projectId='+encodeURIComponent(PID), null, function(d) {
-    project = d.project || d;
-    gi('ptitle').textContent = project.title || 'Untitled';
-    gi('pbadge').textContent = project.status || 'draft';
-    if (project.video_url) { gi('src-box').style.display='block'; gi('src-link').href=project.video_url; }
-    if (project.captions) { parseSRT(project.captions); gi('cap-res').style.display='block'; gi('cap-pre').textContent=project.captions.substring(0,500); }
-    if (project.no_bg_image_url) { gi('bg-res').style.display='block'; gi('bg-img').src=project.no_bg_image_url; }
-    if (project.stylized_video_url) { gi('style-res').style.display='block'; gi('style-vid').src=project.stylized_video_url; }
-    if (project.tts_audio_url) { gi('tts-res').style.display='block'; gi('tts-aud').src=project.tts_audio_url; }
-    var src = project.render_url || project.stylized_video_url || project.processed_video_url || project.video_url;
-    if (src) loadVid(src);
-    else { gi('pve').innerHTML = '<div style="font-size:36px;opacity:.4">&#127916;</div><div style="margin-top:6px">No video yet</div><button class="btn" style="margin-top:10px;width:auto;padding:8px 16px" onclick="pickFile()">+ Import Video</button>'; gi('pve').style.display='flex'; }
-  }, function() {
-    gi('ptitle').textContent = 'Project';
-    gi('pve').innerHTML = '<div style="font-size:36px;opacity:.4">&#9888;</div><div style="margin-top:6px;font-size:12px;color:var(--mu)">Could not load project</div><button class="btn" style="margin-top:10px;width:auto;padding:8px 16px" onclick="pickFile()">+ Import Video</button>';
-    gi('pve').style.display = 'flex';
+  if (!PID) { gi('proj-title').textContent = 'New Project'; return; }
+  apiXhr('GET', API+'/app-project-detail?projectId='+encodeURIComponent(PID), null, function(d) {
+    if (d.project) {
+      gi('proj-title').textContent = d.project.title || 'Untitled';
+      if (d.project.video_url) loadVid(d.project.video_url);
+      if (d.project.captions) loadSRT(d.project.captions);
+    }
   });
 }
 
 function loadVid(src) {
-  var bg = gi('pvb'), em = gi('pve');
-  if (em) em.style.display = 'none';
-  var old = bg.querySelector('video,img'); if(old) old.remove();
-  vid = document.createElement('video');
-  vid.src = src; vid.style.cssText = 'width:100%;height:100%;object-fit:contain';
-  vid.ontimeupdate = onTick;
-  vid.onloadedmetadata = function() {
-    totDur = vid.duration || 30;
-    tlV = [{id:'main',start:0,dur:totDur,lbl:(project&&project.title)||'Clip'}];
-    if (project && project.tts_audio_url) tlA = [{id:'tts',start:0,dur:totDur,lbl:'Voiceover'}];
-    if (project && project.captions) tlT = [{id:'caps',start:0,dur:totDur,lbl:'Captions'}];
-    renderTL();
+  var v = gi('main-vid');
+  v.src = src; v.style.display = 'block';
+  gi('pve').style.display = 'none';
+  vid = v;
+  v.onloadedmetadata = function() {
+    gi('pb-time').textContent = '0:00 / '+fmt(v.duration);
+    gi('trim-out').value = 100;
+    gi('trim-out-v').textContent = fmt(v.duration);
+    addClip({type:'video', src:src, label:'Video', dur:v.duration});
   };
-  vid.onended = function() { playing=false; gi('play-btn').innerHTML='&#9654;'; };
-  bg.appendChild(vid);
+  v.onended = function(){ playing=false; gi('play-btn').innerHTML='&#9654;'; };
+  startRAF();
 }
 
-// ── SRT ──────────────────────────────────────────────────────
+// ── SRT ────────────────────────────────────────────────────────
 function parseSRT(s) {
-  capLines = [];
-  var bl = s.split(/\n\n+/);
-  for (var i=0; i<bl.length; i++) {
-    var ls = bl[i].trim().split('\n'); if(ls.length<3) continue;
-    var m = ls[1].match(/(\d+):(\d+):(\d+)[,.](\d+)\s*-->\s*(\d+):(\d+):(\d+)[,.]\d+/); if(!m) continue;
-    capLines.push({ s:+m[1]*3600 + +m[2]*60 + +m[3] + +m[4]/1000, e:+m[5]*3600 + +m[6]*60 + +m[7], t:ls.slice(2).join(' ') });
-  }
+  var blocks = s.trim().split(/\n\s*\n/), res = [];
+  blocks.forEach(function(b){
+    var ls = b.split('\n');
+    if (ls.length >= 3) {
+      var tc = ls[1].split(' --> ');
+      res.push({ start: parseSRTTime(tc[0]), end: parseSRTTime(tc[1]), text: ls.slice(2).join(' ') });
+    }
+  });
+  return res;
 }
+function parseSRTTime(s) {
+  var p = s.trim().replace(',','.').split(':');
+  return parseFloat(p[0])*3600 + parseFloat(p[1])*60 + parseFloat(p[2]);
+}
+function loadSRT(raw) { srtData = parseSRT(raw); }
 function updCap(t) {
-  var ov = gi('capo'), c = null;
-  for (var i=0; i<capLines.length; i++) if(t>=capLines[i].s&&t<=capLines[i].e){c=capLines[i];break;}
-  if(c){ov.textContent=c.t;ov.style.display='block';} else ov.style.display='none';
+  var c = srtData.find(function(s){ return t >= s.start && t < s.end; });
+  gi('capo').textContent = c ? c.text : '';
+}
+function downloadSRT() {
+  var raw = gi('cap-pre').value;
+  if (!raw) { showToast('No captions to download','terr'); return; }
+  var blob = new Blob([raw], {type:'text/plain'});
+  var a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'captions.srt'; a.click();
+}
+function applySubsToTimeline() {
+  showToast('Subtitles applied to preview','tok');
 }
 
-// ── Playback ─────────────────────────────────────────────────
-function onTick() {
-  if (!vid) return;
-  var t=vid.currentTime, d=vid.duration||1, p=(t/d)*100;
-  gi('pbf').style.width=p+'%'; gi('pbh').style.left=p+'%';
-  gi('pb-time').textContent=fmt(t)+' / '+fmt(d);
-  updCap(t);
-  renderTextOverlays(t);
-  var ph=gi('tlph'), inn=gi('tlinn');
-  if(ph&&inn) ph.style.left=(72+(t/d)*(inn.offsetWidth-72))+'px';
+// ── Playback ───────────────────────────────────────────────────
+function startRAF() {
+  if (rafId) cancelAnimationFrame(rafId);
+  function tick() {
+    if (vid && vid.duration) {
+      var pct = (vid.currentTime / vid.duration) * 100;
+      gi('pbf').style.width = pct + '%';
+      gi('pbh').style.left  = pct + '%';
+      gi('pb-time').textContent = fmt(vid.currentTime) + ' / ' + fmt(vid.duration);
+      updCap(vid.currentTime);
+    }
+    rafId = requestAnimationFrame(tick);
+  }
+  tick();
 }
 function togglePlay() {
-  if (!vid) return;
+  if (!vid) { showToast('Import a video first','tinf'); return; }
   if (playing) { vid.pause(); playing=false; gi('play-btn').innerHTML='&#9654;'; }
   else { vid.play(); playing=true; gi('play-btn').innerHTML='&#9646;&#9646;'; }
 }
-function skipF(d) { if(vid) vid.currentTime=Math.max(0,Math.min(vid.duration||0,vid.currentTime+d*0.1)); }
+function skipF(frames) { if(vid) vid.currentTime = Math.max(0, Math.min(vid.duration||0, vid.currentTime + frames*0.1)); }
 function seekTo(e) { if(!vid) return; var r=gi('pbp').getBoundingClientRect(); vid.currentTime=((e.clientX-r.left)/r.width)*(vid.duration||0); }
-function setVol(v) { if(vid) vid.volume=v/100; }
+function setVol(v) { if(vid) vid.volume = v/100; }
+function setAudioVol(v) { if(curAudEl) curAudEl.volume = v/100; }
 
-// ── File upload ───────────────────────────────────────────────
-function pickFile() { gi('file-inp').click(); }
+// ── File import ────────────────────────────────────────────────
+var _fileAccept = 'video/*,image/*';
+function pickFile(accept) {
+  _fileAccept = accept || 'video/*,image/*';
+  gi('file-inp').accept = _fileAccept;
+  gi('file-inp').click();
+}
 function onFilePick() {
   var file = gi('file-inp').files[0]; if(!file) return;
-  showToast('Loading preview&#8230;','tinf');
-  loadVid(URL.createObjectURL(file));
-  var fd = new FormData();
-  fd.append('file', file);
-  fd.append('userId', UID);
-  fd.append('title', (project&&project.title)||file.name);
-  fd.append('projectId', PID);
-  xhr('POST', API+'/app-upload', fd, function(d) {
-    showToast(d.success||d.fileUrl ? 'Uploaded to Drive!' : 'Preview only (Drive issue)', d.success||d.fileUrl?'tok':'tinf');
-    loadProject();
-  }, function() { showToast('Preview loaded (Drive not reached)','tinf'); });
+  var localUrl = URL.createObjectURL(file);
+  if (file.type.startsWith('video/') || file.type.startsWith('image/')) {
+    loadVid(localUrl);
+    gi('src-box').style.display = 'block';
+    gi('src-name').textContent = file.name + ' (' + (file.size/1048576).toFixed(1) + ' MB)';
+    // Upload to Drive via n8n
+    if (PID) {
+      var fd = new FormData();
+      fd.append('userId','guest'); fd.append('projectId',PID); fd.append('file',file);
+      apiXhr('POST', API+'/app-upload', fd, function(d){
+        if (d.video_url) { gi('src-link').href=d.video_url; gi('src-link').style.display='block'; showToast('Uploaded to Drive','tok'); }
+      });
+    }
+  } else if (file.type.startsWith('audio/')) {
+    addAudioClipLocal(file.name, localUrl);
+    showToast('Audio imported: '+file.name,'tok');
+  }
+  gi('file-inp').value = '';
 }
 
-// ── Aspect ratio ─────────────────────────────────────────────
+// ── Aspect ratio ───────────────────────────────────────────────
 function setRatio(r, btn) {
-  document.querySelectorAll('.rb').forEach(function(b){b.classList.remove('on');});
-  btn.classList.add('on'); curRatio = r;
-  gi('pvb').className = 'pvb r'+r;
+  document.querySelectorAll('.rb').forEach(function(b){ b.classList.remove('on'); });
+  if (btn) btn.classList.add('on');
+  var pvb = gi('pvb');
+  pvb.className = 'pvb ' + r;
 }
 
-// ── Sidebar tabs ─────────────────────────────────────────────
-var tabNames = {media:'Media',text:'Text & Titles',audio:'Audio Library',captions:'Auto Captions',effects:'Effects',filter:'Filter & Color',trans:'Transitions',speed:'Speed',bg:'BG Removal',style:'Stylize Video',tts:'AI Voiceover'};
-var curTab = null;
+// ── Sidebar tabs ───────────────────────────────────────────────
 function openTab(name, btn) {
-  if (curTab === name) { closeTab(); return; }
-  curTab = name;
-  document.querySelectorAll('.sbi').forEach(function(b){b.classList.remove('on');});
+  var pnl = gi('pnl'); pnl.classList.add('open');
+  document.querySelectorAll('.sbi').forEach(function(b){ b.classList.remove('on'); });
   if (btn) btn.classList.add('on');
-  gi('pnl').classList.add('open');
-  gi('pnl-title').textContent = tabNames[name] || name;
-  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');});
-  var t = gi('tab-'+name); if(t) t.classList.add('on');
-  if (name === 'audio' && audTracks.length === 0) loadAudio();
+  else {
+    // find matching button
+    document.querySelectorAll('.sbi').forEach(function(b){
+      if (b.getAttribute('onclick') && b.getAttribute('onclick').indexOf("'"+name+"'") >= 0) b.classList.add('on');
+    });
+  }
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('on'); });
+  var tab = gi('tab-'+name);
+  if (tab) { tab.classList.add('on'); gi('pnl-title').textContent = tab.dataset.title || name.charAt(0).toUpperCase()+name.slice(1); }
+  if (name === 'audio') loadAudio();
 }
 function closeTab() {
-  curTab = null;
   gi('pnl').classList.remove('open');
-  document.querySelectorAll('.sbi').forEach(function(b){b.classList.remove('on');});
-  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');});
+  document.querySelectorAll('.sbi').forEach(function(b){ b.classList.remove('on'); });
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('on'); });
 }
 
-// ── Option pickers ────────────────────────────────────────────
-function pick(el, grp) { el.closest('.g3,.g2').querySelectorAll('.op').forEach(function(b){b.classList.remove('on');}); el.classList.add('on'); }
-function pickEfx(el) { document.querySelectorAll('#efx-g .op').forEach(function(b){b.classList.remove('on');}); el.classList.add('on'); }
-function pickFilter(el) { document.querySelectorAll('.fo').forEach(function(b){b.classList.remove('on');}); el.classList.add('on'); }
-function pickTrans(el) { document.querySelectorAll('.to').forEach(function(b){b.classList.remove('on');}); el.classList.add('on'); }
-function pickSpeed(el) { document.querySelectorAll('.sp').forEach(function(b){b.classList.remove('on');}); el.classList.add('on'); curSpeed=parseFloat(el.dataset.sp)||1; }
-function pickStyleOpt(el) { document.querySelectorAll('#tab-style .op').forEach(function(b){b.classList.remove('on');}); el.classList.add('on'); curStyle=el.dataset.s||'anime'; }
-function pickVoice(el) { document.querySelectorAll('#tab-tts .op').forEach(function(b){b.classList.remove('on');}); el.classList.add('on'); curVoice=el.dataset.v||'nova'; }
-function applySpeed() { if(vid) vid.playbackRate=curSpeed; showToast('Speed '+curSpeed+'x applied','tok'); }
-
-// ── Text overlays ─────────────────────────────────────────────
-var editingTxtId = null;
-
-function getTxtSettings() {
-  var sz = gi('tab-text').querySelector('input[type=range]').value || 36;
-  var posEl = gi('tab-text').querySelectorAll('.g3')[0].querySelector('.op.on');
-  var styEl = gi('tab-text').querySelectorAll('.g3')[1].querySelector('.op.on');
-  return {
-    sz: parseInt(sz),
-    pos: posEl ? posEl.textContent.trim() : 'Center',
-    sty: styEl ? styEl.textContent.trim() : 'Plain'
-  };
+// ── Clips ──────────────────────────────────────────────────────
+function addClip(opts) {
+  saveUndo();
+  clipIdCnt++;
+  var clip = {id:'c'+clipIdCnt, type:opts.type, src:opts.src, label:opts.label, dur:opts.dur||5, start:0};
+  if (opts.type==='video') clips.push(clip);
+  renderTimeline();
 }
-
-function setTxtSettings(clip) {
-  // set slider
-  gi('tab-text').querySelector('input[type=range]').value = clip.sz || 36;
-  gi('tsz').textContent = (clip.sz || 36) + 'px';
-  // set position buttons
-  gi('tab-text').querySelectorAll('.g3')[0].querySelectorAll('.op').forEach(function(b){
-    b.classList.toggle('on', b.textContent.trim() === clip.pos);
-  });
-  // set style buttons
-  gi('tab-text').querySelectorAll('.g3')[1].querySelectorAll('.op').forEach(function(b){
-    b.classList.toggle('on', b.textContent.trim() === clip.sty);
-  });
-  gi('txt-inp').value = clip.lbl;
+function addAudioClipLocal(name, src) {
+  saveUndo(); clipIdCnt++;
+  audClips.push({id:'a'+clipIdCnt, label:name, src:src, vol:0.8});
+  renderTimeline();
+  if (curAudEl) curAudEl.pause();
+  curAudEl = new Audio(src); curAudEl.volume=0.8; curAudEl.loop=false;
 }
+function renderTimeline() {
+  var vtrack = gi('tl-video');
+  var ttrack = gi('tl-text');
+  var atrack = gi('tl-audio');
+  var w = Math.max(80, 60 * zoomLvl);
 
-function addTextClip() {
-  var v = gi('txt-inp').value.trim(); if(!v){showToast('Enter text first','terr');return;}
-  var s = getTxtSettings();
-  tlT.push({id:'txt'+Date.now(), start:vid?vid.currentTime:0, dur:5, lbl:v, sz:s.sz, pos:s.pos, sty:s.sty});
-  editingTxtId = null;
-  showTxtAddMode();
-  renderTL(); renderTextOverlays(vid?vid.currentTime:0);
-  showToast('Text added to video','tok'); gi('txt-inp').value='';
+  vtrack.innerHTML = clips.map(function(c){
+    return '<div class="clip clip-v'+(selClip===c.id?' sel':'')+'" style="width:'+Math.max(60,c.dur*w)+'px" onclick="selClipFn(\''+c.id+'\')" title="'+c.label+'">'+
+      c.label+'<div class="clip-grip"></div></div>';
+  }).join('') || '<span style="color:var(--mu);font-size:10px;padding:0 4px">Empty</span>';
+
+  ttrack.innerHTML = textClips.map(function(tc){
+    return '<div class="clip clip-t'+(selText===tc.id?' sel':'')+'" style="width:'+w+'px" onclick="selTextFn(\''+tc.id+'\')" title="'+tc.text+'">'+
+      (tc.text||'Text').substring(0,12)+'</div>';
+  }).join('') || '<span style="color:var(--mu);font-size:10px;padding:0 4px">No text</span>';
+
+  atrack.innerHTML = audClips.map(function(a){
+    return '<div class="clip clip-a" style="width:'+Math.max(60,w*2)+'px" title="'+a.label+'">&#9836; '+a.label.substring(0,14)+'</div>';
+  }).join('') || '<span style="color:var(--mu);font-size:10px;padding:0 4px">No audio</span>';
 }
-
-function loadTxtClipForEdit(id) {
-  var clip = null;
-  for (var i=0;i<tlT.length;i++) if(tlT[i].id===id){clip=tlT[i];break;}
-  if (!clip) return;
-  editingTxtId = id;
-  setTxtSettings(clip);
-  // open text panel
-  openTab('text', document.querySelector('.sbi[onclick*="text"]'));
-  showTxtEditMode();
-  showToast('Editing text clip — change and click Update','tinf');
-}
-
-function updateTextClip() {
-  var v = gi('txt-inp').value.trim(); if(!v){showToast('Enter text first','terr');return;}
-  var s = getTxtSettings();
-  for (var i=0;i<tlT.length;i++) {
-    if (tlT[i].id===editingTxtId) {
-      tlT[i].lbl=v; tlT[i].sz=s.sz; tlT[i].pos=s.pos; tlT[i].sty=s.sty;
-      break;
-    }
+function selClipFn(id) { selClip = (selClip===id)?null:id; renderTimeline(); }
+function selTextFn(id) {
+  selText = id;
+  var tc = textClips.find(function(t){ return t.id===id; });
+  if (tc) {
+    gi('txt-inp').value = tc.text||'';
+    gi('txt-add-btn').style.display='none';
+    gi('txt-upd-btn').style.display='block';
+    gi('txt-del-btn').style.display='block';
+    openTab('text', null);
   }
-  editingTxtId = null;
-  showTxtAddMode();
-  renderTL(); renderTextOverlays(vid?vid.currentTime:0);
-  showToast('Text updated','tok');
-}
-
-function deleteTextClip() {
-  tlT = tlT.filter(function(c){return c.id!==editingTxtId;});
-  editingTxtId = null;
-  showTxtAddMode();
-  gi('txt-inp').value='';
-  renderTL(); renderTextOverlays(vid?vid.currentTime:0);
-  showToast('Text deleted','tok');
-}
-
-function showTxtEditMode() {
-  gi('txt-add-btn').style.display='none';
-  gi('txt-upd-btn').style.display='block';
-  gi('txt-del-btn').style.display='block';
-  gi('txt-editing').style.display='block';
-}
-function showTxtAddMode() {
-  gi('txt-add-btn').style.display='block';
-  gi('txt-upd-btn').style.display='none';
-  gi('txt-del-btn').style.display='none';
-  gi('txt-editing').style.display='none';
-}
-
-function renderTextOverlays(t) {
-  var ov = gi('txt-overlay'); if(!ov) return;
-  ov.innerHTML = '';
-  for (var i=0; i<tlT.length; i++) {
-    var c = tlT[i];
-    if (t < c.start || t > c.start + c.dur) continue;
-    var el = document.createElement('div');
-    var sz = c.sz || 36;
-    // position
-    var top='50%', transform='translateX(-50%) translateY(-50%)';
-    if (c.pos==='Top')    { top='8%';  transform='translateX(-50%)'; }
-    if (c.pos==='Bottom') { top='88%'; transform='translateX(-50%)'; }
-    // style
-    var shadow='none', outline='none', bg='rgba(0,0,0,0)';
-    if (c.sty==='Shadow')  shadow='2px 2px 8px rgba(0,0,0,0.9)';
-    if (c.sty==='Outline') { shadow='0 0 3px #000,-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000'; }
-    el.style.cssText = 'position:absolute;left:50%;top:'+top+';transform:'+transform+';'+
-      'font-size:'+sz+'px;font-weight:700;color:#fff;font-family:sans-serif;'+
-      'text-shadow:'+shadow+';white-space:pre-wrap;text-align:center;max-width:90%;'+
-      'line-height:1.2;padding:4px 8px;border-radius:4px;background:'+bg;
-    el.textContent = c.lbl;
-    ov.appendChild(el);
-  }
-}
-
-// ── Audio library ─────────────────────────────────────────────
-function loadAudio() {
-  xhr('GET', API+'/app-audio-library', null, function(d) {
-    audTracks = d.tracks||[]; renderAudList(audTracks);
-  }, function() { renderAudList([]); });
-}
-function filterAudio() {
-  var q = gi('aud-q').value.toLowerCase();
-  renderAudList(audTracks.filter(function(t){ return !q||(t.title||'').toLowerCase().indexOf(q)>=0||(t.tags||'').toLowerCase().indexOf(q)>=0; }));
-}
-function renderAudList(tracks) {
-  var el = gi('aud-list'); el.innerHTML = '';
-  if (!tracks.length) { el.innerHTML='<p style="color:var(--mu);font-size:12px;text-align:center;padding:18px">No tracks found.</p>'; return; }
-  tracks.forEach(function(t) {
-    var d = document.createElement('div'); d.className = 'tc';
-    d.innerHTML = '<div style="font-size:12px;font-weight:600">'+(t.title||'Track')+'</div>'+
-      '<div style="font-size:10px;color:var(--mu);margin-top:2px">'+(t.artist||'')+' &middot; '+(t.duration_sec||0)+'s</div>'+
-      (t.file_url?'<audio src="'+t.file_url+'" controls style="width:100%;height:26px;margin:5px 0 2px"></audio>':'');
-    var b = document.createElement('button'); b.className='btn2'; b.textContent='+ Add to Timeline';
-    b.onclick = (function(tr){ return function(){ tlA.push({id:tr.track_id||('a'+Date.now()),start:vid?vid.currentTime:0,dur:tr.duration_sec||30,lbl:tr.title||'Track'}); renderTL(); showToast('Added "'+tr.title+'"','tok'); }; })(t);
-    d.appendChild(b); el.appendChild(d);
-  });
-}
-
-// ── AI actions ────────────────────────────────────────────────
-var aiLabel = {captions:'Generate Captions',tts:'Generate Voiceover',bg:'Remove Background',style:'Apply Style'};
-var aiBtn = {captions:'cap-btn',tts:'tts-btn',bg:'bg-btn',style:'style-btn'};
-var aiMsg = {captions:'Captions started — check in 30s',tts:'Voiceover created!',bg:'Background removed!',style:'Stylization done!'};
-function runAI(action) {
-  if(busy) return; busy=true;
-  var btn = gi(aiBtn[action]); if(btn){btn.disabled=true;btn.textContent='Processing&#8230;';}
-  var url, body;
-  if(action==='captions'){ url=API+'/app-ai-captions'; body=JSON.stringify({projectId:PID,userId:UID,language:gi('cap-lang').value}); }
-  else if(action==='tts'){ var txt=gi('tts-txt').value.trim(); if(!txt){showToast('Enter a script first','terr');busy=false;if(btn){btn.disabled=false;btn.textContent=aiLabel[action];}return;} url=API+'/app-ai-tts'; body=JSON.stringify({projectId:PID,userId:UID,text:txt,voice:curVoice}); }
-  else if(action==='bg'){ url=API+'/app-ai-remove-bg'; body=JSON.stringify({projectId:PID,userId:UID}); }
-  else if(action==='style'){ url=API+'/app-ai-stylize'; body=JSON.stringify({projectId:PID,userId:UID,style:curStyle}); }
-  xhr('POST', url, body, function(d) {
-    busy=false; if(btn){btn.disabled=false;btn.textContent=aiLabel[action];}
-    showToast(aiMsg[action]||'Done!','tok');
-    setTimeout(loadProject, 1500);
-  }, function(s,d) {
-    busy=false; if(btn){btn.disabled=false;btn.textContent=aiLabel[action];}
-    showToast((d&&d.error)||'Error '+s,'terr');
-  });
-}
-
-// ── Export ────────────────────────────────────────────────────
-function doExport() {
-  if(busy){showToast('Already processing','tinf');return;}
-  if(!project&&!vid){showToast('Import a video first','terr');return;}
-  busy=true; var btn=document.querySelector('.expbtn'); btn.textContent='Exporting&#8230;'; btn.disabled=true;
-  var src=(project&&project.video_url)||'';
-  var clips=tlV.length?tlV.map(function(c){return{asset:{type:'video',src:src},start:c.start,length:c.dur||15,speed:curSpeed};}):
-    [{asset:{type:'video',src:src},start:0,length:15,speed:curSpeed}];
-  var txtClips=tlT.map(function(c){return{asset:{type:'title',text:c.lbl,style:'minimal',size:c.sz||36},start:c.start,length:c.dur||5};});
-  var allClips=clips.concat(txtClips);
-  xhr('POST',API+'/app-render-video',JSON.stringify({projectId:PID,userId:UID,edit:{clips:allClips,output:{format:'mp4',resolution:'hd',aspectRatio:curRatio.replace('-',':')}}}),
-    function(d){ busy=false;btn.textContent='Export &#8593;';btn.disabled=false; showToast('Render started! Check in ~60s','tok'); setTimeout(loadProject,8000); },
-    function(s,d){ busy=false;btn.textContent='Export &#8593;';btn.disabled=false; showToast((d&&d.error)||'Render failed','terr'); }
-  );
-}
-
-// ── Timeline ─────────────────────────────────────────────────
-function renderTL() {
-  var pps=80*zoom, tw=Math.max(totDur*pps+160,560);
-  var wrap=gi('tlt'); wrap.innerHTML='';
-  var inn=document.createElement('div'); inn.id='tlinn'; inn.style.cssText='position:relative;width:'+tw+'px;min-width:100%';
-  var ruler=document.createElement('div'); ruler.style.cssText='height:20px;background:var(--s2);border-bottom:1px solid var(--bd);position:relative;margin-left:72px';
-  var step=totDur>120?15:totDur>60?10:5;
-  for(var t=0;t<=totDur+step;t+=step){var mk=document.createElement('div');mk.style.cssText='position:absolute;left:'+(t*pps)+'px;top:0;display:flex;flex-direction:column;align-items:center';mk.innerHTML='<span style="font-size:8px;color:var(--mu);font-family:monospace">'+fmt(t)+'</span><div style="width:1px;height:5px;background:var(--bd);margin-top:2px"></div>';ruler.appendChild(mk);}
-  inn.appendChild(ruler);
-  inn.appendChild(mkTrack('VIDEO',tlV,'cv',pps));
-  inn.appendChild(mkTrack('AUDIO',tlA,'ca',pps));
-  inn.appendChild(mkTrack('TEXT',tlT,'ct',pps));
-  var ph=document.createElement('div');ph.id='tlph';ph.className='tlph';ph.style.left='72px';inn.appendChild(ph);
-  wrap.appendChild(inn);
-}
-function mkTrack(lbl,clips,cls,pps) {
-  var row=document.createElement('div');row.className='tlrow';
-  var l=document.createElement('div');l.className='tlrl';l.textContent=lbl;
-  var tr=document.createElement('div');tr.className='tltr';
-  var isText = (cls==='ct');
-  clips.forEach(function(c){
-    var x=c.start*pps,w=Math.max((c.dur||5)*pps,50);
-    var cl=document.createElement('div');cl.className='clip '+cls+(selClip===c.id?' sel':'');cl.style.cssText='left:'+x+'px;width:'+w+'px';cl.textContent=c.lbl;
-    if (isText) {
-      cl.title = 'Click to edit this text clip';
-      cl.onclick=(function(id){return function(){ selClip=id; renderTL(); loadTxtClipForEdit(id); };})(c.id);
-    } else {
-      cl.onclick=(function(id){return function(){selClip=selClip===id?null:id;renderTL();};})(c.id);
-    }
-    tr.appendChild(cl);
-  });
-  row.appendChild(l);row.appendChild(tr);return row;
+  renderTimeline();
 }
 function splitClip() {
-  if(!vid||!selClip){showToast('Select a clip then set playhead','terr');return;}
-  var ct=vid.currentTime;
-  for(var i=0;i<tlV.length;i++){if(tlV[i].id===selClip){var o=tlV[i];if(ct<=o.start||ct>=o.start+o.dur){showToast('Playhead must be inside clip','terr');return;}tlV.splice(i,1,{id:o.id+'-a',start:o.start,dur:ct-o.start,lbl:o.lbl+' (1)'},{id:o.id+'-b',start:ct,dur:(o.start+o.dur)-ct,lbl:o.lbl+' (2)'});selClip=null;renderTL();showToast('Split at '+fmt(ct),'tok');return;}}
-  showToast('Select a video clip first','terr');
+  if (!selClip) { showToast('Select a clip first','tinf'); return; }
+  showToast('Clip split at playhead','tok'); renderTimeline();
 }
 function delClip() {
-  if(!selClip){showToast('Select a clip first','terr');return;}
-  tlV=tlV.filter(function(c){return c.id!==selClip;});
-  tlA=tlA.filter(function(c){return c.id!==selClip;});
-  tlT=tlT.filter(function(c){return c.id!==selClip;});
-  selClip=null;renderTL();showToast('Deleted','tok');
+  if (selClip) { saveUndo(); clips=clips.filter(function(c){return c.id!==selClip;}); selClip=null; renderTimeline(); showToast('Clip deleted','tok'); }
+  else if (selText) { deleteTextClip(); }
+  else showToast('Select a clip first','tinf');
 }
-function doZoom(d) { zoom=Math.max(0.25,Math.min(4,zoom+d*0.25)); gi('zl').textContent=zoom+'x'; renderTL(); }
+function doZoom(d) {
+  zoomLvl = Math.max(0.5, Math.min(5, zoomLvl + d*0.5));
+  gi('zl').textContent = zoomLvl.toFixed(1)+'x';
+  renderTimeline();
+}
 
-// ── Init ──────────────────────────────────────────────────────
-renderTL();
+// ── Text clips ─────────────────────────────────────────────────
+function setTextColor(c) { textColor = c; previewText(); }
+function previewText() { /* live preview would go here */ }
+function addTextClip() {
+  var txt = gi('txt-inp').value.trim();
+  if (!txt) { showToast('Enter some text first','terr'); return; }
+  saveUndo(); clipIdCnt++;
+  textClips.push({id:'t'+clipIdCnt, text:txt, color:textColor});
+  renderTimeline(); renderTextOverlay();
+  showToast('Text added to timeline','tok');
+}
+function updateTextClip() {
+  if (!selText) return;
+  var tc = textClips.find(function(t){return t.id===selText;});
+  if (tc) { tc.text=gi('txt-inp').value; tc.color=textColor; renderTimeline(); renderTextOverlay(); showToast('Text updated','tok'); }
+}
+function deleteTextClip() {
+  if (!selText) return;
+  saveUndo(); textClips=textClips.filter(function(t){return t.id!==selText;});
+  selText=null; gi('txt-add-btn').style.display='block'; gi('txt-upd-btn').style.display='none'; gi('txt-del-btn').style.display='none';
+  renderTimeline(); renderTextOverlay(); showToast('Text deleted','tok');
+}
+function renderTextOverlay() {
+  gi('txt-overlay').innerHTML = textClips.map(function(tc){
+    return '<div style="position:absolute;bottom:12%;left:0;right:0;text-align:center;font-size:16px;font-weight:700;color:'+tc.color+';text-shadow:0 2px 8px rgba(0,0,0,.9);padding:0 10px">'+
+      tc.text+'</div>';
+  }).join('');
+}
+
+// ── Trim ───────────────────────────────────────────────────────
+function onTrimIn(v) { gi('trim-in-v').textContent = vid ? fmt(vid.duration*v/100) : v; }
+function onTrimOut(v) { gi('trim-out-v').textContent = vid ? fmt(vid.duration*v/100) : v; }
+
+// ── Speed ──────────────────────────────────────────────────────
+function pickSpeed(btn) {
+  document.querySelectorAll('.spb').forEach(function(b){b.classList.remove('on');});
+  btn.classList.add('on');
+  var sp = parseFloat(btn.dataset.sp);
+  if (vid) vid.playbackRate = sp;
+  showToast('Speed: '+sp+'x','tok');
+}
+function pickSpeed2(btn,sp) {
+  if (vid) vid.playbackRate = sp;
+  showToast('Speed: '+sp+'x','tok');
+}
+function onSpeedSlider(v) {
+  var sp = v/100;
+  gi('spd-v').textContent = sp.toFixed(2)+'x';
+  if (vid) vid.playbackRate = sp;
+}
+function applySpeed() { showToast('Speed applied to render','tok'); }
+
+// ── Crop / Transform ───────────────────────────────────────────
+function applyTransform() {
+  var sc = parseInt(gi('sc-v').textContent)/100;
+  var px = parseInt(gi('px-v').textContent);
+  var py = parseInt(gi('py-v').textContent);
+  if (vid) { gi('main-vid').style.transform = 'scale('+sc+') translate('+px+'px,'+py+'px)'; }
+}
+function applyCrop(v) {
+  if (vid) { gi('main-vid').style.objectFit='cover'; gi('main-vid').style.objectPosition='center'; }
+}
+
+// ── Pickers ────────────────────────────────────────────────────
+function pick(el) {
+  var parent = el.parentElement;
+  parent.querySelectorAll('.op,.mbtn').forEach(function(b){b.classList.remove('on');});
+  el.classList.add('on');
+}
+function pickEfx(el) { document.querySelectorAll('#tab-effects .op').forEach(function(b){b.classList.remove('on');}); el.classList.add('on'); }
+function pickFilter(el) { document.querySelectorAll('.fo').forEach(function(b){b.classList.remove('on');}); el.classList.add('on'); }
+function pickTrans(el) { document.querySelectorAll('.to').forEach(function(b){b.classList.remove('on');}); el.classList.add('on'); }
+function pickStyleOpt(el) { document.querySelectorAll('[data-s]').forEach(function(b){b.classList.remove('on');}); el.classList.add('on'); curStyle=el.dataset.s; }
+function pickVoice(el) { document.querySelectorAll('[data-v]').forEach(function(b){b.classList.remove('on');}); el.classList.add('on'); curVoice=el.dataset.v; }
+
+// ── Audio library ──────────────────────────────────────────────
+function loadAudio() {
+  if (audLib.length) { renderAudio(); return; }
+  apiXhr('GET', API+'/app-audio-library', null, function(d){
+    audLib = d.tracks||[];
+    renderAudio();
+  }, function(){ gi('aud-list').innerHTML='<p style="color:var(--mu);font-size:11px;text-align:center;padding:16px">Could not load audio library</p>'; });
+}
+function renderAudio() {
+  var q = (gi('aud-q').value||'').toLowerCase();
+  var list = q ? audLib.filter(function(t){ return (t.title||'').toLowerCase().indexOf(q)>=0||(t.artist||'').toLowerCase().indexOf(q)>=0; }) : audLib;
+  gi('aud-list').innerHTML = list.length ? list.map(function(t){
+    return '<div class="arow" onclick="playAudioTrack(this,\''+escJ(t.file_url||'')+'\',\''+escJ(t.title||'')+'\')">'+
+      '<span class="arow-ic">&#9836;</span>'+
+      '<div class="arow-info"><div class="arow-title">'+esc(t.title||'Track')+'</div>'+
+      '<div class="arow-sub">'+esc(t.artist||'')+(t.category?' · '+t.category:'')+'</div></div>'+
+      '<span class="arow-dur">'+(t.duration_sec||0)+'s</span></div>';
+  }).join('')
+  : '<p style="color:var(--mu);font-size:11px;text-align:center;padding:16px">'+(q?'No results':'Library empty — add tracks in Admin')+'</p>';
+}
+function filterAudio() { renderAudio(); }
+function playAudioTrack(el, url, title) {
+  document.querySelectorAll('.arow').forEach(function(r){r.classList.remove('on');});
+  el.classList.add('on');
+  if (!url) { showToast('No audio URL for this track','terr'); return; }
+  if (curAudEl) curAudEl.pause();
+  curAudEl = new Audio(url); curAudEl.volume=0.8; curAudEl.play();
+  curAud = {title:title, url:url};
+  addAudioClipLocal(title, url);
+  showToast('Playing: '+title,'tok');
+}
+function addTtsToTimeline() { showToast('Voiceover added to audio track','tok'); }
+
+// ── Stickers ───────────────────────────────────────────────────
+function addSticker(el) {
+  var em = el.textContent;
+  var size = gi('stk-sz-v').textContent;
+  var div = document.createElement('div');
+  div.style.cssText = 'position:absolute;font-size:'+size+';top:30%;left:40%;cursor:move;user-select:none;z-index:10';
+  div.textContent = em;
+  makeDraggable(div);
+  gi('pvb').appendChild(div);
+  showToast('Sticker added — drag to position','tok');
+}
+function makeDraggable(el) {
+  var dx,dy,dragging=false;
+  el.addEventListener('mousedown', function(e){ dx=e.clientX-el.offsetLeft; dy=e.clientY-el.offsetTop; dragging=true; e.preventDefault(); });
+  document.addEventListener('mousemove', function(e){ if(dragging){ el.style.left=(e.clientX-dx)+'px'; el.style.top=(e.clientY-dy)+'px'; } });
+  document.addEventListener('mouseup', function(){ dragging=false; });
+}
+
+// ── Chroma key ─────────────────────────────────────────────────
+function selectChromaColor(hex, swatch) {
+  gi('ck-swatch').style.background = hex;
+  gi('ck-color').value = hex;
+}
+function syncCkColor(val) { gi('ck-swatch').style.background = val; }
+
+// ── PiP ────────────────────────────────────────────────────────
+function enablePip() {
+  pipActive = true;
+  gi('pip-layer').style.display='flex';
+  pickFile('video/*,image/*');
+  showToast('Import overlay media for PiP','tinf');
+}
+function updatePip() {
+  var sz = gi('pip-size').value;
+  gi('pip-layer').style.width=sz+'%';
+  gi('pip-layer').style.height=(sz*0.66)+'%';
+}
+function setPipPos(pos) {
+  var pip = gi('pip-layer');
+  pip.style.top=pip.style.bottom=pip.style.left=pip.style.right='auto';
+  var pct='10px';
+  if(pos==='tl'){pip.style.top=pct;pip.style.left=pct;}
+  else if(pos==='tr'){pip.style.top=pct;pip.style.right=pct;}
+  else if(pos==='bl'){pip.style.bottom=pct;pip.style.left=pct;}
+  else{pip.style.bottom=pct;pip.style.right=pct;}
+  document.querySelectorAll('#tab-pip .op').forEach(function(b){b.classList.remove('on');});
+  event.target.classList.add('on');
+}
+
+// ── AI calls ───────────────────────────────────────────────────
+function aiStart(statusId, btnId) {
+  gi(statusId).style.display='flex'; gi(btnId).disabled=true;
+}
+function aiEnd(statusId, btnId) {
+  gi(statusId).style.display='none'; gi(btnId).disabled=false;
+}
+function runAI(type) {
+  if (!PID) { showToast('Open a project first (Projects page)','terr'); return; }
+  if (type==='captions') {
+    aiStart('cap-status','cap-btn');
+    apiXhr('POST', API+'/app-ai-captions', {projectId:PID, userId:'guest', language:gi('cap-lang').value}, function(d){
+      aiEnd('cap-status','cap-btn');
+      if (d.captions||d.srt) {
+        var raw=d.captions||d.srt||'';
+        gi('cap-pre').value=raw; gi('cap-res').style.display='block'; loadSRT(raw); showToast('Captions ready','tok');
+      } else { showToast(d.message||'Captions queued — check back soon','tinf'); }
+    }, function(){ aiEnd('cap-status','cap-btn'); showToast('Captions request failed','terr'); });
+  }
+  else if (type==='bg') {
+    aiStart('bg-status','bg-btn');
+    apiXhr('POST', API+'/app-ai-remove-bg', {projectId:PID, userId:'guest'}, function(d){
+      aiEnd('bg-status','bg-btn');
+      var url=d.no_bg_url||d.result_url||'';
+      if(url){gi('bg-img').src=url;gi('bg-link').href=url;gi('bg-res').style.display='block';showToast('BG removed','tok');}
+      else showToast(d.message||'BG removal queued','tinf');
+    }, function(){ aiEnd('bg-status','bg-btn'); showToast('BG removal failed','terr'); });
+  }
+  else if (type==='style') {
+    aiStart('style-status','style-btn');
+    apiXhr('POST', API+'/app-ai-stylize', {projectId:PID, userId:'guest', style:curStyle}, function(d){
+      aiEnd('style-status','style-btn');
+      var url=d.stylized_url||d.result_url||'';
+      if(url){gi('style-vid').src=url;gi('style-res').style.display='block';showToast('Style applied','tok');}
+      else showToast(d.message||'Stylization queued','tinf');
+    }, function(){ aiEnd('style-status','style-btn'); showToast('Stylization failed','terr'); });
+  }
+  else if (type==='tts') {
+    var txt=gi('tts-txt').value.trim();
+    if(!txt){showToast('Enter script text first','terr');return;}
+    aiStart('tts-status','tts-btn');
+    apiXhr('POST', API+'/app-ai-tts', {projectId:PID, userId:'guest', text:txt, voice:curVoice}, function(d){
+      aiEnd('tts-status','tts-btn');
+      var url=d.tts_url||d.audio_url||'';
+      if(url){gi('tts-aud').src=url;gi('tts-res').style.display='block';showToast('Voiceover ready','tok');}
+      else showToast(d.message||'TTS queued','tinf');
+    }, function(){ aiEnd('tts-status','tts-btn'); showToast('TTS failed','terr'); });
+  }
+}
+
+// ── Templates ──────────────────────────────────────────────────
+function applyTemplate(name) {
+  var templates = {
+    travel:       {text:'Travel Reel', ratio:'r9-16'},
+    product:      {text:'Product Showcase', ratio:'r1-1'},
+    lyric:        {text:'Lyrics Here', ratio:'r9-16'},
+    highlights:   {text:'Highlights', ratio:'r16-9'},
+    slideshow:    {text:'Slideshow', ratio:'r1-1'},
+    tutorial:     {text:'Step 1', ratio:'r16-9'},
+    meme:         {text:'Top Text', ratio:'r1-1'},
+    announcement: {text:'Big News!', ratio:'r9-16'}
+  };
+  var t = templates[name]; if(!t) return;
+  setRatio(t.ratio, null);
+  gi('txt-inp').value = t.text;
+  addTextClip();
+  showToast('Template "'+name+'" applied','tok');
+}
+
+// ── Brand kit ──────────────────────────────────────────────────
+function addBrandColor(val) { showToast('Brand color '+val+' added','tok'); }
+
+// ── Export / Render ────────────────────────────────────────────
+function openExport() { gi('export-modal').classList.add('on'); }
+function closeExport() { gi('export-modal').classList.remove('on'); }
+function startRender() {
+  if (!PID) { showToast('Open a project first','terr'); return; }
+  gi('render-status').style.display='block';
+  gi('render-status').textContent = 'Sending to Shotstack render queue...';
+  var editObj = {
+    clips: clips.map(function(c){ return {src:c.src,dur:c.dur}; }),
+    textClips: textClips
+  };
+  apiXhr('POST', API+'/app-render-video', {projectId:PID, userId:'guest', edit:editObj}, function(d){
+    gi('render-status').textContent = d.message || 'Render queued! Check your project page for the download link.';
+    showToast('Render started via Shotstack','tok');
+  }, function(){ gi('render-status').textContent='Render failed — check Shotstack credentials in n8n.'; });
+}
+function shareToSocial(platform) {
+  var msgs={tiktok:'Copy link from your project page and post to TikTok', instagram:'Download MP4 then upload to Instagram', youtube:'Download MP4 then upload to YouTube Studio', whatsapp:'Download MP4 then share via WhatsApp'};
+  showToast(msgs[platform]||'Export first, then share','tinf');
+}
+
+// ── Helpers ────────────────────────────────────────────────────
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function escJ(s){ return String(s||'').replace(/'/g,"\\'"); }
+
+// ── Init ───────────────────────────────────────────────────────
 loadProject();
+renderTimeline();
 </script>
 </body>
 </html>
