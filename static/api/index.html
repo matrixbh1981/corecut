@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>CoreCut API Reference</title>
+<style>
+:root{--bg:#0d0d12;--s1:#16161f;--s2:#1e1e2a;--s3:#252532;--bd:#2d2d3d;--tx:#f0f0f8;--mu:#8888aa;--ac:#7c3aed;--al:#a78bfa;--gn:#22c55e;--rd:#ef4444;--yl:#f59e0b;--bl:#3b82f6}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--tx);display:flex;min-height:100vh}
+/* SIDEBAR NAV */
+.nav{width:240px;background:var(--s1);border-right:1px solid var(--bd);flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column}
+.nav-logo{padding:20px 16px 12px;border-bottom:1px solid var(--bd)}
+.nav-logo a{text-decoration:none;color:var(--al);font-size:18px;font-weight:900}
+.nav-logo span{font-size:11px;color:var(--mu);display:block;margin-top:2px}
+.nav-section{padding:16px 16px 4px;font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.5px}
+.nav a{display:flex;align-items:center;gap:8px;padding:7px 16px;font-size:13px;color:var(--mu);text-decoration:none;border-left:2px solid transparent}
+.nav a:hover{color:var(--tx);background:var(--s2)}
+.nav a.active{color:var(--al);border-left-color:var(--ac);background:rgba(124,58,237,.08)}
+.nav-badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px;margin-left:auto}
+.get{background:rgba(34,197,94,.15);color:#86efac}
+.post{background:rgba(59,130,246,.15);color:#93c5fd}
+/* MAIN */
+.main{flex:1;max-width:900px;padding:40px 40px 80px;overflow-x:hidden}
+.page-title{font-size:30px;font-weight:900;margin-bottom:8px}
+.page-sub{font-size:15px;color:var(--mu);margin-bottom:32px;line-height:1.6}
+.base-url{background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:12px 16px;font-family:monospace;font-size:13px;color:var(--al);margin-bottom:40px;display:flex;align-items:center;gap:10px}
+.base-url span{color:var(--mu);font-family:sans-serif;font-size:12px;font-weight:600}
+/* ENDPOINT */
+.endpoint{margin-bottom:48px;scroll-margin-top:24px}
+.ep-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.ep-method{font-size:11px;font-weight:800;padding:4px 10px;border-radius:6px;text-transform:uppercase;flex-shrink:0}
+.ep-method.GET{background:rgba(34,197,94,.15);color:#86efac}
+.ep-method.POST{background:rgba(59,130,246,.15);color:#93c5fd}
+.ep-path{font-family:monospace;font-size:15px;font-weight:600;color:var(--tx)}
+.ep-name{font-size:11px;color:var(--mu)}
+.ep-desc{font-size:13px;color:var(--mu);line-height:1.6;margin-bottom:14px}
+.section-label{font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;margin-top:14px}
+.code-block{background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:14px 16px;font-family:'Courier New',monospace;font-size:12px;line-height:1.7;overflow-x:auto;position:relative}
+.code-block pre{color:var(--tx);white-space:pre}
+.copy-btn{position:absolute;top:8px;right:8px;background:var(--s3);border:1px solid var(--bd);color:var(--mu);font-size:10px;padding:3px 8px;border-radius:4px;cursor:pointer}
+.copy-btn:hover{color:var(--tx)}
+.params-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}
+.params-table th{text-align:left;padding:6px 10px;background:var(--s2);color:var(--mu);font-weight:600;border-bottom:1px solid var(--bd)}
+.params-table td{padding:7px 10px;border-bottom:1px solid var(--bd);vertical-align:top}
+.params-table tr:last-child td{border-bottom:none}
+.tag{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:4px}
+.req{background:rgba(239,68,68,.15);color:#fca5a5}
+.opt{background:rgba(100,100,120,.2);color:var(--mu)}
+.type{color:var(--yl);font-family:monospace;font-size:11px}
+.divider{border:none;border-top:1px solid var(--bd);margin:48px 0}
+/* STATUS BADGES */
+.status{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:4px 10px;border-radius:6px;margin-right:6px;margin-bottom:6px}
+.s200{background:rgba(34,197,94,.12);color:#86efac;border:1px solid rgba(34,197,94,.3)}
+.s201{background:rgba(59,130,246,.12);color:#93c5fd;border:1px solid rgba(59,130,246,.3)}
+.s400{background:rgba(239,68,68,.12);color:#fca5a5;border:1px solid rgba(239,68,68,.3)}
+.s404{background:rgba(245,158,11,.12);color:#fcd34d;border:1px solid rgba(245,158,11,.3)}
+/* KEY */
+.kw{color:#c4b5fd}
+.str{color:#86efac}
+.num{color:#fcd34d}
+.boo{color:#f9a8d4}
+.cm{color:var(--mu)}
+/* HERO */
+.hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:40px}
+.hero-card{background:var(--s2);border:1px solid var(--bd);border-radius:10px;padding:16px}
+.hero-card-icon{font-size:22px;margin-bottom:8px}
+.hero-card-title{font-size:12px;font-weight:700;margin-bottom:4px}
+.hero-card-val{font-size:11px;color:var(--mu);line-height:1.5}
+/* TRY IT */
+.try-box{background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:16px;margin-top:14px}
+.try-title{font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;margin-bottom:10px}
+.try-box input,.try-box textarea,.try-box select{width:100%;background:var(--s3);border:1px solid var(--bd);border-radius:6px;padding:7px 10px;font-size:12px;color:var(--tx);outline:none;font-family:monospace;margin-bottom:6px}
+.try-box textarea{resize:vertical;min-height:80px}
+.try-run{background:var(--ac);color:#fff;font-size:12px;font-weight:700;padding:7px 16px;border-radius:6px;border:none;cursor:pointer}
+.try-run:hover{background:#6d28d9}
+.try-res{margin-top:10px;background:var(--s3);border:1px solid var(--bd);border-radius:6px;padding:10px;font-family:monospace;font-size:11px;color:var(--tx);white-space:pre-wrap;max-height:200px;overflow-y:auto;display:none}
+.try-res.ok{border-color:rgba(34,197,94,.4)}
+.try-res.err{border-color:rgba(239,68,68,.4);color:#fca5a5}
+@media(max-width:700px){.nav{display:none}.main{padding:24px 16px 60px}.hero-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="nav">
+  <div class="nav-logo">
+    <a href="../">CoreCut</a>
+    <span>API Reference v1.0</span>
+  </div>
+  <div class="nav-section">Overview</div>
+  <a href="#intro" class="active">Introduction</a>
+  <a href="#auth">Authentication</a>
+  <div class="nav-section">Projects</div>
+  <a href="#create-project"><span class="nav-badge post">POST</span> Create Project</a>
+  <a href="#list-projects"><span class="nav-badge get">GET</span> List Projects</a>
+  <a href="#project-detail"><span class="nav-badge get">GET</span> Project Detail</a>
+  <div class="nav-section">Media</div>
+  <a href="#upload"><span class="nav-badge post">POST</span> Upload File</a>
+  <div class="nav-section">AI Features</div>
+  <a href="#captions"><span class="nav-badge post">POST</span> Auto Captions</a>
+  <a href="#tts"><span class="nav-badge post">POST</span> Text to Speech</a>
+  <a href="#bg-removal"><span class="nav-badge post">POST</span> BG Removal</a>
+  <a href="#stylize"><span class="nav-badge post">POST</span> Stylize Video</a>
+  <div class="nav-section">Export</div>
+  <a href="#render"><span class="nav-badge post">POST</span> Render Video</a>
+  <a href="#job-status"><span class="nav-badge get">GET</span> Job Status</a>
+  <div class="nav-section">Audio</div>
+  <a href="#audio-list"><span class="nav-badge get">GET</span> Audio Library</a>
+  <div class="nav-section">Notifications</div>
+  <a href="#notify"><span class="nav-badge post">POST</span> Send Notification</a>
+</nav>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+
+  <!-- INTRO -->
+  <div id="intro" class="endpoint">
+    <div class="page-title">CoreCut API</div>
+    <div class="page-sub">
+      REST API powering the CoreCut video editor. All endpoints are n8n webhooks —
+      no API key required for public endpoints. Send JSON bodies for POST requests.
+    </div>
+    <div class="base-url">
+      <span>Base URL</span>
+      https://matrixbh.app.n8n.cloud/webhook
+    </div>
+    <div class="hero-grid">
+      <div class="hero-card">
+        <div class="hero-card-icon">&#9889;</div>
+        <div class="hero-card-title">No Auth Required</div>
+        <div class="hero-card-val">All public endpoints work without API keys or tokens.</div>
+      </div>
+      <div class="hero-card">
+        <div class="hero-card-icon">&#127757;</div>
+        <div class="hero-card-title">REST + JSON</div>
+        <div class="hero-card-val">Standard HTTP methods. Send <code style="color:var(--al)">Content-Type: application/json</code>.</div>
+      </div>
+      <div class="hero-card">
+        <div class="hero-card-icon">&#129302;</div>
+        <div class="hero-card-title">AI Powered</div>
+        <div class="hero-card-val">Whisper, OpenAI TTS, Replicate, and Shotstack integrated.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- AUTH -->
+  <div id="auth" class="endpoint">
+    <div class="ep-header">
+      <div class="ep-name" style="font-size:18px;font-weight:800;color:var(--tx)">Authentication</div>
+    </div>
+    <div class="ep-desc">
+      CoreCut API currently uses a guest user model. Pass <code style="color:var(--al)">userId</code> in every request body.
+      For production, replace with your own JWT or session token system.
+    </div>
+    <div class="section-label">Current Guest User ID</div>
+    <div class="code-block"><pre><span class="str">"guest-user-001"</span></pre></div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- CREATE PROJECT -->
+  <div id="create-project" class="endpoint">
+    <div class="ep-header">
+      <div class="ep-method POST">POST</div>
+      <div class="ep-path">/app-create-project</div>
+    </div>
+    <div class="ep-desc">Create a new empty project. Returns a project ID used for all subsequent API calls.</div>
+    <div class="section-label">Request Body</div>
+    <table class="params-table">
+      <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+      <tr><td>userId</td><td class="type">string</td><td><span class="tag req">required</span></td><td>User identifier</td></tr>
+      <tr><td>title</td><td class="type">string</td><td><span class="tag req">required</span></td><td>Project name shown in the editor</td></tr>
+    </table>
+    <div class="section-label">Example Request</div>
+    <div class="code-block">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      <pre><span class="cm">// POST /app-create-project</span>
+{
+  <span class="kw">"userId"</span>: <span class="str">"guest-user-001"</span>,
+  <span class="kw">"title"</span>: <span class="str">"My Vacation Video"</span>
+}</pre>
+    </div>
+    <div class="section-label">Response</div>
+    <span class="status s201">201 Created</span>
+    <div class="code-block"><pre>{
+  <span class="kw">"success"</span>: <span class="boo">true</span>,
+  <span class="kw">"project_id"</span>: <span class="str">"proj-1784308806209-87298"</span>,
+  <span class="kw">"title"</span>: <span class="str">"My Vacation Video"</span>,
+  <span class="kw">"status"</span>: <span class="str">"draft"</span>
+}</pre></div>
+    <div class="try-box">
+      <div class="try-title">Try it</div>
+      <input id="cp-title" placeholder='Project title e.g. "My Video"' value="Test Project"/>
+      <button class="try-run" onclick="tryCreateProject()">Send Request</button>
+      <div class="try-res" id="cp-res"></div>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- LIST PROJECTS -->
+  <div id="list-projects" class="endpoint">
+    <div class="ep-header">
+      <div class="ep-method GET">GET</div>
+      <div class="ep-path">/app-projects?userId=</div>
+    </div>
+    <div class="ep-desc">List all projects for a user. Returns an array of project summaries.</div>
+    <div class="section-label">Query Parameters</div>
+    <table class="params-table">
+      <tr><th>Param</th><th>Type</th><th>Required</th><th>Description</th></tr>
+      <tr><td>userId</td><td class="type">string</td><td><span class="tag req">required</span></td><td>User identifier</td></tr>
+    </table>
+    <div class="section-label">Example Request</div>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre>GET /app-projects?userId=guest-user-001</pre></div>
+    <div class="section-label">Response</div>
+    <span class="status s200">200 OK</span>
+    <div class="code-block"><pre>{
+  <span class="kw">"projects"</span>: [
+    {
+      <span class="kw">"project_id"</span>: <span class="str">"proj-1784308806209-87298"</span>,
+      <span class="kw">"title"</span>: <span class="str">"My Vacation Video"</span>,
+      <span class="kw">"status"</span>: <span class="str">"uploaded"</span>,
+      <span class="kw">"video_url"</span>: <span class="str">"https://drive.google.com/..."</span>,
+      <span class="kw">"render_url"</span>: <span class="str">""</span>,
+      <span class="kw">"created_at"</span>: <span class="str">"2026-07-17T17:20:06Z"</span>
+    }
+  ]
+}</pre></div>
+    <div class="try-box">
+      <div class="try-title">Try it</div>
+      <button class="try-run" onclick="tryListProjects()">Send Request</button>
+      <div class="try-res" id="lp-res"></div>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- PROJECT DETAIL -->
+  <div id="project-detail" class="endpoint">
+    <div class="ep-header">
+      <div class="ep-method GET">GET</div>
+      <div class="ep-path">/app-project-detail?projectId=</div>
+    </div>
+    <div class="ep-desc">Get full project data including all AI output URLs.</div>
+    <div class="section-label">Query Parameters</div>
+    <table class="params-table">
+      <tr><th>Param</th><th>Type</th><th>Required</th><th>Description</th></tr>
+      <tr><td>projectId</td><td class="type">string</td><td><span class="tag req">required</span></td><td>Project ID from create or list</td></tr>
+    </table>
+    <div class="section-label">Response</div>
+    <span class="status s200">200 OK</span><span class="status s404">404 Not Found</span>
+    <div class="code-block"><pre>{
+  <span class="kw">"project_id"</span>: <span class="str">"proj-1784308806209-87298"</span>,
+  <span class="kw">"user_id"</span>: <span class="str">"guest-user-001"</span>,
+  <span class="kw">"title"</span>: <span class="str">"My Vacation Video"</span>,
+  <span class="kw">"status"</span>: <span class="str">"uploaded"</span>,
+  <span class="kw">"video_url"</span>: <span class="str">"https://drive.google.com/..."</span>,
+  <span class="kw">"processed_video_url"</span>: <span class="str">""</span>,
+  <span class="kw">"captions"</span>: <span class="str">"1\n00:00:01,000 --> 00:00:04,000\nHello world"</span>,
+  <span class="kw">"tts_audio_url"</span>: <span class="str">"https://drive.google.com/..."</span>,
+  <span class="kw">"stylized_video_url"</span>: <span class="str">""</span>,
+  <span class="kw">"no_bg_image_url"</span>: <span class="str">""</span>,
+  <span class="kw">"render_url"</span>: <span class="str">"https://cdn.shotstack.io/..."</span>,
+  <span class="kw">"created_at"</span>: <span class="str">"2026-07-17T17:20:06Z"</span>,
+  <span class="kw">"updated_at"</span>: <span class="str">"2026-07-17T17:20:06Z"</span>
+}</pre></div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- UPLOAD -->
+  <div id="upload" class="endpoint">
+    <div class="ep-header">
+      <div class="ep-method POST">POST</div>
+      <div class="ep-path">/app-upload</div>
+    </div>
+    <div class="ep-desc">Upload a video or image file to Google Drive and attach it to a project. Send as <strong>multipart/form-data</strong>.</div>
+    <div class="section-label">Form Fields</div>
+    <table class="params-table">
+      <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+      <tr><td>file</td><td class="type">binary</td><td><span class="tag req">required</span></td><td>Video or image file</td></tr>
+      <tr><td>userId</td><td class="type">string</td><td><span class="tag req">required</span></td><td>User identifier</td></tr>
+      <tr><td>title</td><td class="type">string</td><td><span class="tag req">required</span></td><td>File/project title</td></tr>
+      <tr><td>projectId</td><td class="type">string</td><td><span class="tag opt">optional</span></td><td>Attach to existing project</td></tr>
+    </table>
+    <div class="section-label">Example Request</div>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="cm">// JavaScript — multipart/form-data</span>
+<span class="kw">const</span> fd = <span class="kw">new</span> FormData();
+fd.append(<span class="str">'file'</span>, fileInput.files[<span class="num">0</span>]);
+fd.append(<span class="str">'userId'</span>, <span class="str">'guest-user-001'</span>);
+fd.append(<span class="str">'title'</span>, <span class="str">'My Video'</span>);
+fd.append(<span class="str">'projectId'</span>, <span class="str">'proj-...'</span>);
+
+<span class="kw">fetch</span>(<span class="str">'https://matrixbh.app.n8n.cloud/webhook/app-upload'</span>, {
+  method: <span class="str">'POST'</span>,
+  body: fd
+});</pre></div>
+    <div class="section-label">Response</div>
+    <span class="status s201">201 Created</span>
+    <div class="code-block"><pre>{
+  <span class="kw">"success"</span>: <span class="boo">true</span>,
+  <span class="kw">"projectId"</span>: <span class="str">"proj-1784308806209-87298"</span>,
+  <span class="kw">"fileUrl"</span>: <span class="str">"https://drive.google.com/file/d/.../view"</span>
+}</pre></div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- CAPTIONS -->
+  <div id="captions" class="endpoint">
+    <div class="ep-header">
+      <div class="ep-method POST">POST</div>
+      <div class="ep-path">/app-ai-captions</div>
+    </div>
+    <div class="ep-desc">Generate auto-captions from the project video using OpenAI Whisper. Returns 202 immediately — captions are saved to the project asynchronously.</div>
+    <div class="section-label">Request Body</div>
+    <table class="params-table">
+      <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+      <tr><td>projectId</td><td class="type">string</td><td><span class="tag req">required</span></td><td>Project to transcribe</td></tr>
+      <tr><td>userId</td><td class="type">string</td><td><span class="tag req">required</span></td><td>User identifier</td></tr>
+      <tr><td>language</td><td class="type">string</td><td><span class="tag opt">optional</span></td><td><code>en</code>, <code>ar</code>, <code>fr</code>, <code>es</code>, <code>de</code>, <code>ja</code>, <code>zh</code>. Default: <code>en</code></td></tr>
+    </table>
+    <div class="section-label">Example Request</div>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre>{
+  <span class="kw">"projectId"</span>: <span class="str">"proj-1784308806209-87298"</span>,
+  <span class="kw">"userId"</span>: <span class="str">"guest-user-001"</span>,
+  <span class="kw">"language"</span>: <span class="str">"en"</span>
+}</pre></div>
+    <div class="section-label">Response</div>
+    <span class="status s200">200 Accepted</span>
+    <div class="code-block"><pre>{ <span class="kw">"status"</span>: <span class="str">"processing"</span>, <span class="kw">"message"</span>: <span class="str">"Captions will be saved to project"</span> }</pre></div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- TTS -->
+  <div id="tts" class="endpoint">
+    <div class="ep-header">
+      <div class="ep-method POST">POST</div>
+      <div class="ep-path">/app-ai-tts</div>
+    </div>
+    <div class="ep-desc">Generate an AI voiceover MP3 from text using OpenAI TTS and save it to the project.</div>
+    <div class="section-label">Request Body</div>
+    <table class="params-table">
+      <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+      <tr><td>projectId</td><td class="type">string</td><td><span class="tag req">required</span></td><td>Target project</td></tr>
+      <tr><td>userId</td><td class="type">string</td><td><span class="tag req">required</span></td><td>User identifier</td></tr>
+      <tr><td>text</td><td class="type">string</td><td><span class="tag req">required</span></td><td>Voiceover script</td></tr>
+      <tr><td>voice</td><td class="type">string</td><td><span class="tag opt">optional</span></td><td><code>alloy</code> <code>echo</code> <code>fable</code> <code>onyx</code> <code>nova</code> <code>shimmer</code>. Default: <code>nova</code></td></tr>
+    </table>
+    <div class="section-label">Example Request</div>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre>{
+  <span class="kw">"projectId"</span>: <span class="str">"proj-1784308806209-87298"</span>,
+  <span class="kw">"userId"</span>: <span class="str">"guest-user-001"</span>,
+  <span class="kw">"text"</span>: <span class="str">"Welcome to my video. Today we explore..."</span>,
+  <span class="kw">"voice"</span>: <span class="str">"nova"</span>
+}</pre></div>
+    <div class="section-label">Response</div>
+    <span class="status s200">200 OK</span>
+    <div class="code-block"><pre>{
+  <span class="kw">"success"</span>: <span class="boo">true</span>,
+  <span class="kw">"tts_audio_url"</span>: <span class="str">"https://drive.google.com/file/d/.../view"</span>
+}</pre></div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- BG REMOVAL -->
+  <div id="bg-removal" class="endpoint">
+    <div class="ep-header">
+      <div class="ep-method POST">POST</div>
+      <div class="ep-path">/app-ai-remove-bg</div>
+    </div>
+    <div class="ep-desc">Remove background from the project's source image using Replicate's rembg model.</div>
+    <div class="section-label">Request Body</div>
+    <table class="params-table">
+      <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+      <tr><td>projectId</td><td class="type">string</td><td><span class="tag req">required</span></td><td>Project with source image</td></tr>
+      <tr><td>userId</td><td class="type">string</td><td><span class="tag req">required</span></td><td>User identifier</td></tr>
+    </table>
+    <div class="section-label">Response</div>
+    <span class="status s200">200 OK</span>
+    <div class="code-block"><pre>{
+  <span class="kw">"success"</span>: <span class="boo">true</span>,
+  <span class="kw">"no_bg_image_url"</span>: <span class="str">"https://replicate.delivery/..."</span>
+}</pre></div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- STYLIZE -->
+  <div id="stylize" class="endpoint">
+    <div class="ep-header">
+      <div class="ep-method POST">POST</div>
+      <div class="ep-path">/app-ai-stylize</div>
+    </div>
+    <div class="ep-desc">Apply an AI artistic style to the project video using Replicate models.</div>
+    <div class="section-label">Request Body</div>
+    <table class="params-table">
+      <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+      <tr><td>projectId</td><td class="type">string</td><td><span class="tag req">required</span></td><td>Target project</td></tr>
+      <tr><td>userId</td><td class="type">string</td><td><span class="tag req">required</span></td><td>User identifier</td></tr>
+      <tr><td>style</td><td class="type">string</td><td><span class="tag req">required</span></td><td><code>anime</code> | <code>3d</code> | <code>neon</code></td></tr>
+    </table>
+    <div class="section-label">Response</div>
+    <span class="status s200">200 OK</span>
+    <div class="code-block"><pre>{
+  <span class="kw">"success"</span>: <span class="boo">true</span>,
+  <span class="kw">"stylized_video_url"</span>: <span class="str">"https://replicate.delivery/..."</span>
+}</pre></div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- RENDER -->
+  <div id="render" class="endpoint">
+    <div class="ep-header">
+      <div class="ep-method POST">POST</div>
+      <div class="ep-path">/app-render-video</div>
+    </div>
+    <div class="ep-desc">Render a final MP4 video via Shotstack. Define clips, text overlays, audio, and output format. Rendering takes 30–90 seconds.</div>
+    <div class="section-label">Request Body</div>
+    <table class="params-table">
+      <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+      <tr><td>projectId</td><td class="type">string</td><td><span class="tag req">required</span></td><td>Target project</td></tr>
+      <tr><td>userId</td><td class="type">string</td><td><span class="tag req">required</span></td><td>User identifier</td></tr>
+      <tr><td>edit</td><td class="type">object</td><td><span class="tag req">required</span></td><td>Shotstack edit object (clips, output)</td></tr>
+    </table>
+    <div class="section-label">Example Request</div>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre>{
+  <span class="kw">"projectId"</span>: <span class="str">"proj-1784308806209-87298"</span>,
+  <span class="kw">"userId"</span>: <span class="str">"guest-user-001"</span>,
+  <span class="kw">"edit"</span>: {
+    <span class="kw">"clips"</span>: [
+      {
+        <span class="kw">"asset"</span>: { <span class="kw">"type"</span>: <span class="str">"video"</span>, <span class="kw">"src"</span>: <span class="str">"https://drive.google.com/..."</span> },
+        <span class="kw">"start"</span>: <span class="num">0</span>,
+        <span class="kw">"length"</span>: <span class="num">15</span>,
+        <span class="kw">"speed"</span>: <span class="num">1</span>
+      },
+      {
+        <span class="kw">"asset"</span>: { <span class="kw">"type"</span>: <span class="str">"title"</span>, <span class="kw">"text"</span>: <span class="str">"My Title"</span>, <span class="kw">"style"</span>: <span class="str">"minimal"</span> },
+        <span class="kw">"start"</span>: <span class="num">0</span>,
+        <span class="kw">"length"</span>: <span class="num">3</span>
+      }
+    ],
+    <span class="kw">"output"</span>: {
+      <span class="kw">"format"</span>: <span class="str">"mp4"</span>,
+      <span class="kw">"resolution"</span>: <span class="str">"hd"</span>,
+      <span class="kw">"aspectRatio"</span>: <span class="str">"9:16"</span>
+    }
+  }
+}</pre></div>
+    <div class="section-label">Response</div>
+    <span class="status s200">200 OK</span>
+    <div class="code-block"><pre>{
+  <span class="kw">"success"</span>: <span class="boo">true</span>,
+  <span class="kw">"render_url"</span>: <span class="str">"https://cdn.shotstack.io/au/v1/.../output.mp4"</span>
+}</pre></div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- JOB STATUS -->
+  <div id="job-status" class="endpoint">
+    <div class="ep-header">
+      <div class="ep-method GET">GET</div>
+      <div class="ep-path">/app-job-status?jobId=</div>
+    </div>
+    <div class="ep-desc">Check the status of an AI processing job.</div>
+    <div class="section-label">Response</div>
+    <span class="status s200">200 OK</span><span class="status s404">404 Not Found</span>
+    <div class="code-block"><pre>{
+  <span class="kw">"job_id"</span>: <span class="str">"job-abc123"</span>,
+  <span class="kw">"job_type"</span>: <span class="str">"captions"</span>,
+  <span class="kw">"status"</span>: <span class="str">"done"</span>,
+  <span class="kw">"result_url"</span>: <span class="str">"https://..."</span>,
+  <span class="kw">"error"</span>: <span class="str">""</span>
+}</pre></div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- AUDIO -->
+  <div id="audio-list" class="endpoint">
+    <div class="ep-header">
+      <div class="ep-method GET">GET</div>
+      <div class="ep-path">/app-audio-library</div>
+    </div>
+    <div class="ep-desc">Browse the audio library. Filter by category or search by name/tags.</div>
+    <div class="section-label">Query Parameters</div>
+    <table class="params-table">
+      <tr><th>Param</th><th>Type</th><th>Required</th><th>Description</th></tr>
+      <tr><td>category</td><td class="type">string</td><td><span class="tag opt">optional</span></td><td>Filter by category e.g. <code>music</code>, <code>sfx</code></td></tr>
+      <tr><td>search</td><td class="type">string</td><td><span class="tag opt">optional</span></td><td>Search by title or tags</td></tr>
+    </table>
+    <div class="section-label">Response</div>
+    <span class="status s200">200 OK</span>
+    <div class="code-block"><pre>{
+  <span class="kw">"tracks"</span>: [
+    {
+      <span class="kw">"track_id"</span>: <span class="str">"track-001"</span>,
+      <span class="kw">"title"</span>: <span class="str">"Upbeat Intro"</span>,
+      <span class="kw">"artist"</span>: <span class="str">"CoreCut Music"</span>,
+      <span class="kw">"category"</span>: <span class="str">"music"</span>,
+      <span class="kw">"duration_sec"</span>: <span class="num">30</span>,
+      <span class="kw">"file_url"</span>: <span class="str">"https://..."</span>,
+      <span class="kw">"tags"</span>: <span class="str">"upbeat,energetic,intro"</span>
+    }
+  ]
+}</pre></div>
+    <div class="try-box">
+      <div class="try-title">Try it</div>
+      <button class="try-run" onclick="tryAudioList()">Send Request</button>
+      <div class="try-res" id="al-res"></div>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- NOTIFY -->
+  <div id="notify" class="endpoint">
+    <div class="ep-header">
+      <div class="ep-method POST">POST</div>
+      <div class="ep-path">/app-send-notification</div>
+    </div>
+    <div class="ep-desc">Send a push notification to a user's device via Firebase FCM.</div>
+    <div class="section-label">Request Body</div>
+    <table class="params-table">
+      <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+      <tr><td>userId</td><td class="type">string</td><td><span class="tag req">required</span></td><td>Target user</td></tr>
+      <tr><td>title</td><td class="type">string</td><td><span class="tag req">required</span></td><td>Notification title</td></tr>
+      <tr><td>message</td><td class="type">string</td><td><span class="tag req">required</span></td><td>Notification body</td></tr>
+    </table>
+    <div class="section-label">Example Request</div>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre>{
+  <span class="kw">"userId"</span>: <span class="str">"guest-user-001"</span>,
+  <span class="kw">"title"</span>: <span class="str">"Your video is ready!"</span>,
+  <span class="kw">"message"</span>: <span class="str">"Your render has completed. Tap to download."</span>
+}</pre></div>
+    <div class="section-label">Response</div>
+    <span class="status s200">200 OK</span>
+    <div class="code-block"><pre>{ <span class="kw">"success"</span>: <span class="boo">true</span>, <span class="kw">"channel"</span>: <span class="str">"fcm"</span> }</pre></div>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+var BASE = 'https://matrixbh.app.n8n.cloud/webhook';
+var UID = 'guest-user-001';
+
+function copyCode(btn) {
+  var pre = btn.nextElementSibling;
+  navigator.clipboard.writeText(pre.textContent.trim()).then(function(){
+    btn.textContent='Copied!'; setTimeout(function(){btn.textContent='Copy';},2000);
+  });
+}
+
+function showRes(id, data, ok) {
+  var el = document.getElementById(id);
+  el.textContent = JSON.stringify(data, null, 2);
+  el.className = 'try-res ' + (ok?'ok':'err');
+  el.style.display = 'block';
+}
+
+function tryCreateProject() {
+  var title = document.getElementById('cp-title').value || 'Test Project';
+  fetch(BASE+'/app-create-project', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({userId:UID, title:title})
+  }).then(function(r){return r.json();}).then(function(d){showRes('cp-res',d,true);}).catch(function(e){showRes('cp-res',{error:e.message},false);});
+}
+
+function tryListProjects() {
+  fetch(BASE+'/app-projects?userId='+UID)
+    .then(function(r){return r.json();}).then(function(d){showRes('lp-res',d,true);}).catch(function(e){showRes('lp-res',{error:e.message},false);});
+}
+
+function tryAudioList() {
+  fetch(BASE+'/app-audio-library')
+    .then(function(r){return r.json();}).then(function(d){showRes('al-res',d,true);}).catch(function(e){showRes('al-res',{error:e.message},false);});
+}
+
+// Highlight active nav link on scroll
+var sections = document.querySelectorAll('.endpoint[id]');
+var navLinks = document.querySelectorAll('.nav a[href^="#"]');
+window.addEventListener('scroll', function(){
+  var y = window.scrollY + 80;
+  sections.forEach(function(s){
+    if (s.offsetTop <= y && s.offsetTop + s.offsetHeight > y) {
+      navLinks.forEach(function(a){ a.classList.remove('active'); });
+      var l = document.querySelector('.nav a[href="#'+s.id+'"]');
+      if(l) l.classList.add('active');
+    }
+  });
+});
+</script>
+</body>
+</html>
