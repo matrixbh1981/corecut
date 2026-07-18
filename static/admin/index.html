@@ -284,23 +284,25 @@ var curFile = null;
 var allData = { projects:[], users:[], audio:[], jobs:[] };
 
 // ── Login ─────────────────────────────────────────────────────
+var ADMIN_PW = 'corecut2026'; // same as save.php — change both if you change one
+
 function doLogin() {
   var p = document.getElementById('pw-inp').value.trim();
   if (!p) return;
+  if (p !== ADMIN_PW) {
+    document.getElementById('login-err').style.display = 'block';
+    document.getElementById('pw-inp').value = '';
+    document.getElementById('pw-inp').focus();
+    return;
+  }
   PASS = p;
-  // quick validation: try to list projects
-  apiGet('/app-projects?userId=guest-user-001', function(d) {
-    document.getElementById('login-wrap').style.display = 'none';
-    document.getElementById('nav').style.display = 'flex';
-    document.getElementById('main-area').style.display = 'block';
-    loadAll();
-  }, function() {
-    // API might still work — just open the panel
-    document.getElementById('login-wrap').style.display = 'none';
-    document.getElementById('nav').style.display = 'flex';
-    document.getElementById('main-area').style.display = 'block';
-    loadAll();
-  });
+  document.getElementById('login-err').style.display = 'none';
+  document.getElementById('login-wrap').style.display = 'none';
+  document.getElementById('nav').style.display = 'flex';
+  document.getElementById('main-area').style.display = 'block';
+  // pre-fill php password field
+  document.getElementById('php-pass').value = PASS;
+  loadAll();
 }
 function doLogout() {
   PASS = ''; location.reload();
