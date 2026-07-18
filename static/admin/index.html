@@ -98,6 +98,36 @@ tr:hover td{background:rgba(124,58,237,.04)}
 .tok{background:#14532d;color:#86efac;border:1px solid var(--gn)}
 .terr{background:#450a0a;color:#fca5a5;border:1px solid var(--rd)}
 .tinf{background:#1e3a5f;color:#93c5fd;border:1px solid var(--bl)}
+
+/* STORAGE */
+.storage-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.storage-stats{font-size:12px;color:var(--mu);margin-left:auto}
+.drop-zone{border:2px dashed var(--bd);border-radius:12px;padding:40px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;margin-bottom:20px;position:relative}
+.drop-zone.drag{border-color:var(--ac);background:rgba(124,58,237,.06)}
+.drop-zone-ic{font-size:36px;margin-bottom:10px}
+.drop-zone-txt{font-size:14px;font-weight:600;color:var(--tx);margin-bottom:4px}
+.drop-zone-sub{font-size:12px;color:var(--mu)}
+.drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.progress-bar{width:100%;height:6px;background:var(--bd);border-radius:3px;overflow:hidden;display:none;margin-bottom:16px}
+.progress-fill{height:100%;background:var(--ac);width:0;border-radius:3px;transition:width .2s}
+.file-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:24px}
+.file-card{background:var(--s1);border:1px solid var(--bd);border-radius:10px;overflow:hidden;position:relative;cursor:default}
+.file-card:hover{border-color:var(--ac)}
+.file-card:hover .file-card-actions{opacity:1}
+.file-thumb{width:100%;height:120px;object-fit:cover;display:block;background:var(--s2)}
+.file-thumb-ic{width:100%;height:120px;display:flex;align-items:center;justify-content:center;font-size:40px;background:var(--s2)}
+.file-card-info{padding:8px 10px}
+.file-card-name{font-size:11px;font-weight:600;color:var(--tx);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:2px}
+.file-card-meta{font-size:10px;color:var(--mu)}
+.file-card-actions{position:absolute;top:6px;right:6px;display:flex;gap:4px;opacity:0;transition:opacity .2s}
+.file-card-btn{background:rgba(0,0,0,.7);border:none;color:#fff;font-size:11px;padding:4px 8px;border-radius:5px;cursor:pointer}
+.file-card-btn:hover{background:var(--ac)}
+.file-card-btn.del:hover{background:var(--rd)}
+.upload-progress{position:fixed;bottom:20px;right:20px;background:var(--s1);border:1px solid var(--bd);border-radius:10px;padding:14px 18px;z-index:8888;min-width:260px;display:none}
+.upload-progress-name{font-size:12px;color:var(--tx);margin-bottom:8px;font-weight:600}
+.view-toggle{display:flex;gap:4px}
+.view-btn{background:var(--s2);border:1px solid var(--bd);color:var(--mu);padding:5px 9px;border-radius:5px;cursor:pointer;font-size:13px}
+.view-btn.on{background:rgba(124,58,237,.15);border-color:var(--ac);color:var(--al)}
 /* MISC */
 .empty{padding:40px;text-align:center;color:var(--mu);font-size:13px}
 .loading{padding:30px;text-align:center;color:var(--mu);font-size:12px}
@@ -130,6 +160,7 @@ tr:hover td{background:rgba(124,58,237,.04)}
   <a onclick="showPage('jobs')" id="nav-jobs"><span class="nav-ic">&#9881;</span>AI Jobs</a>
   <div class="nav-sec">Site</div>
   <a onclick="showPage('files')" id="nav-files"><span class="nav-ic">&#128196;</span>File Editor</a>
+  <a onclick="showPage('storage')" id="nav-storage"><span class="nav-ic">&#128230;</span>Storage</a>
   <a href="../api/" target="_blank"><span class="nav-ic">&#128279;</span>API Docs</a>
   <a href="../" target="_blank"><span class="nav-ic">&#127968;</span>View Site</a>
   <div class="nav-bottom">
@@ -150,6 +181,7 @@ tr:hover td{background:rgba(124,58,237,.04)}
       <div class="stat"><div class="stat-val" id="st-audio">-</div><div class="stat-lbl">Audio Tracks</div></div>
       <div class="stat"><div class="stat-val" id="st-jobs">-</div><div class="stat-lbl">AI Jobs</div></div>
       <div class="stat"><div class="stat-val" id="st-renders">-</div><div class="stat-lbl">Rendered Videos</div></div>
+      <div class="stat"><div class="stat-val" id="st-storage">-</div><div class="stat-lbl">Stored Files</div></div>
     </div>
     <div class="tbl-wrap">
       <div class="tbl-head"><h3>Recent Projects</h3></div>
@@ -265,6 +297,60 @@ tr:hover td{background:rgba(124,58,237,.04)}
     </div>
   </div>
 
+
+  <!-- STORAGE -->
+  <div class="page" id="page-storage">
+    <div class="page-title">Storage</div>
+    <div class="page-sub">Upload and manage files — videos, images, audio, documents</div>
+
+    <!-- Drop Zone -->
+    <div class="drop-zone" id="drop-zone">
+      <div class="drop-zone-ic">&#128230;</div>
+      <div class="drop-zone-txt">Drag &amp; drop files here</div>
+      <div class="drop-zone-sub">Or click to browse &mdash; max 100 MB per file</div>
+      <input type="file" id="file-input" multiple onchange="handleFileSelect(this.files)"/>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="storage-toolbar">
+      <button class="btn" onclick="document.getElementById('file-input').click()">&#8679; Upload Files</button>
+      <button class="btn2" onclick="loadStorage()">&#8635; Refresh</button>
+      <input class="tbl-search" id="storage-search" placeholder="Search files&#8230;" oninput="filterStorage(this.value)" style="width:200px"/>
+      <div class="view-toggle">
+        <button class="view-btn on" id="view-grid-btn" onclick="setStorageView('grid')" title="Grid view">&#9783;</button>
+        <button class="view-btn" id="view-list-btn" onclick="setStorageView('list')" title="List view">&#9776;</button>
+      </div>
+      <div class="storage-stats" id="storage-stats">Loading&hellip;</div>
+    </div>
+
+    <!-- Upload progress -->
+    <div class="upload-progress" id="upload-progress">
+      <div class="upload-progress-name" id="up-name">Uploading&hellip;</div>
+      <div class="progress-bar" style="display:block"><div class="progress-fill" id="up-fill"></div></div>
+      <div style="font-size:11px;color:var(--mu)" id="up-pct">0%</div>
+    </div>
+
+    <!-- Grid view -->
+    <div class="file-grid" id="storage-grid"></div>
+
+    <!-- List view -->
+    <div class="tbl-wrap" id="storage-list-wrap" style="display:none">
+      <div style="overflow-x:auto"><table>
+        <thead><tr><th>File</th><th>Type</th><th>Size</th><th>Uploaded</th><th>URL</th><th>Actions</th></tr></thead>
+        <tbody id="storage-list-tbody"></tbody>
+      </table></div>
+    </div>
+
+    <!-- PHP URL config -->
+    <div style="margin-top:20px;padding:14px 16px;background:var(--s1);border:1px solid var(--bd);border-radius:10px">
+      <div style="font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;margin-bottom:8px">Upload PHP Endpoint</div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <input class="finp" id="upload-url" value="https://corecut.matrixland.net/admin/upload.php" style="flex:1;min-width:200px"/>
+        <div style="font-size:11px;color:var(--mu)">Upload <code style="color:var(--al)">admin/upload.php</code> to Hostinger to enable storage</div>
+      </div>
+    </div>
+  </div>
+
 </div><!-- /main -->
 
 <!-- MODAL -->
@@ -327,6 +413,7 @@ function showPage(name) {
   if (name === 'audio')    renderAudio();
   if (name === 'jobs')     renderJobs();
   if (name === 'dashboard') renderDashboard();
+  if (name === 'storage')   loadStorage();
 }
 
 // ── API helpers ───────────────────────────────────────────────
@@ -386,6 +473,7 @@ function updateStats() {
   document.getElementById('st-jobs').textContent     = allData.jobs.length || '—';
   var renders = allData.projects.filter(function(p){ return p.render_url; }).length;
   document.getElementById('st-renders').textContent  = renders;
+  // storage stat updated by updateStorageStats()
 }
 
 // ── Dashboard ─────────────────────────────────────────────────
@@ -647,6 +735,228 @@ function statusBadge(s) {
   var cls = {draft:'bdraft',uploaded:'buploaded',done:'bdone',error:'berr',processing:'bproc'}[s]||'bdraft';
   return '<span class="badge '+cls+'">'+esc(s||'draft')+'</span>';
 }
+
+// ── Storage ───────────────────────────────────────────────────
+var storageFiles = [];
+var storageView  = 'grid';
+var uploading    = false;
+
+function getUploadUrl() {
+  return (document.getElementById('upload-url')||{value:'https://corecut.matrixland.net/admin/upload.php'}).value
+      || 'https://corecut.matrixland.net/admin/upload.php';
+}
+
+function loadStorage() {
+  document.getElementById('storage-grid').innerHTML = '<div class="loading">Loading&hellip;</div>';
+  document.getElementById('storage-list-tbody').innerHTML = '<tr><td colspan="6" class="loading">Loading&hellip;</td></tr>';
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', getUploadUrl(), true);
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.onload = function() {
+    try { var d = JSON.parse(xhr.responseText); storageFiles = d.files||[]; renderStorage(); updateStorageStats(); }
+    catch(e) { storageGrid('<div class="empty">Cannot connect to upload.php &mdash; upload it to Hostinger first</div>'); }
+  };
+  xhr.onerror = function() { storageGrid('<div class="empty">Network error &mdash; check upload.php is uploaded</div>'); };
+  xhr.send(JSON.stringify({action:'list', password: PASS}));
+}
+
+function updateStorageStats() {
+  var total = storageFiles.reduce(function(a,f){ return a + (f.size||0); }, 0);
+  document.getElementById('storage-stats').textContent =
+    storageFiles.length + ' file' + (storageFiles.length!==1?'s':'') + ' &bull; ' + formatSize(total);
+  document.getElementById('st-storage').textContent = storageFiles.length;
+}
+
+function renderStorage(list) {
+  var files = list || storageFiles;
+  if (storageView === 'grid') renderStorageGrid(files);
+  else renderStorageList(files);
+}
+
+function renderStorageGrid(files) {
+  if (!files.length) { storageGrid('<div class="empty">No files uploaded yet</div>'); return; }
+  var html = files.map(function(f){ return fileCard(f); }).join('');
+  storageGrid(html);
+}
+function storageGrid(html) {
+  document.getElementById('storage-grid').innerHTML = html;
+}
+
+function renderStorageList(files) {
+  if (!files.length) {
+    document.getElementById('storage-list-tbody').innerHTML = '<tr><td colspan="6" class="empty">No files uploaded yet</td></tr>';
+    return;
+  }
+  document.getElementById('storage-list-tbody').innerHTML = files.map(function(f){
+    var date = f.time ? new Date(f.time*1000).toLocaleDateString() : '';
+    return '<tr>'+
+      '<td style="font-family:monospace;font-size:11px">'+esc(f.name)+'</td>'+
+      '<td>'+esc(mimeLabel(f.mime))+'</td>'+
+      '<td>'+formatSize(f.size)+'</td>'+
+      '<td>'+date+'</td>'+
+      '<td><a href="'+esc(f.url)+'" target="_blank" style="color:var(--al);font-size:11px">'+esc(f.url)+'</a></td>'+
+      '<td><div class="act">'+
+        '<button class="ab" onclick="copyUrl(\''+escJ(f.url)+'\')" title="Copy URL">Copy</button>'+
+        '<button class="ab del" onclick="deleteStorageFile(\''+escJ(f.name)+'\')" title="Delete">Del</button>'+
+      '</div></td>'+
+      '</tr>';
+  }).join('');
+}
+
+function fileCard(f) {
+  var thumb = '';
+  if (f.mime && f.mime.startsWith('image/')) {
+    thumb = '<img class="file-thumb" src="'+esc(f.url)+'" loading="lazy" onerror="this.style.display=\'none\'"/>';
+  } else {
+    thumb = '<div class="file-thumb-ic">'+mimeIcon(f.mime)+'</div>';
+  }
+  var date = f.time ? new Date(f.time*1000).toLocaleDateString() : '';
+  return '<div class="file-card" data-name="'+esc(f.name)+'" data-url="'+esc(f.url)+'">'+
+    thumb+
+    '<div class="file-card-actions">'+
+      '<button class="file-card-btn" onclick="copyUrl(\''+escJ(f.url)+'\')" title="Copy URL">Copy</button>'+
+      '<button class="file-card-btn del" onclick="deleteStorageFile(\''+escJ(f.name)+'\')" title="Delete">&#128465;</button>'+
+    '</div>'+
+    '<div class="file-card-info">'+
+      '<div class="file-card-name" title="'+esc(f.name)+'">'+esc(f.name)+'</div>'+
+      '<div class="file-card-meta">'+formatSize(f.size)+' &bull; '+date+'</div>'+
+    '</div>'+
+    '</div>';
+}
+
+function mimeIcon(mime) {
+  if (!mime) return '&#128196;';
+  if (mime.startsWith('image/'))  return '&#128444;';
+  if (mime.startsWith('video/'))  return '&#127916;';
+  if (mime.startsWith('audio/'))  return '&#127925;';
+  if (mime.includes('pdf'))       return '&#128209;';
+  if (mime.includes('zip') || mime.includes('compressed')) return '&#128230;';
+  return '&#128196;';
+}
+function mimeLabel(mime) {
+  if (!mime) return 'File';
+  if (mime.startsWith('image/'))  return 'Image';
+  if (mime.startsWith('video/'))  return 'Video';
+  if (mime.startsWith('audio/'))  return 'Audio';
+  if (mime.includes('pdf'))       return 'PDF';
+  if (mime.includes('zip'))       return 'ZIP';
+  return mime.split('/')[1] || mime;
+}
+
+function setStorageView(v) {
+  storageView = v;
+  document.getElementById('storage-grid').style.display      = v==='grid' ? '' : 'none';
+  document.getElementById('storage-list-wrap').style.display = v==='list' ? '' : 'none';
+  document.getElementById('view-grid-btn').classList.toggle('on', v==='grid');
+  document.getElementById('view-list-btn').classList.toggle('on', v==='list');
+  renderStorage();
+}
+
+function filterStorage(q) {
+  q = q.toLowerCase();
+  var filtered = q ? storageFiles.filter(function(f){ return f.name.toLowerCase().indexOf(q)>=0; }) : storageFiles;
+  renderStorage(filtered);
+}
+
+function copyUrl(url) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(function(){ toast('URL copied!', 'tok'); });
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = url; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    toast('URL copied!', 'tok');
+  }
+}
+
+function deleteStorageFile(name) {
+  if (!confirm('Delete ' + name + '? This cannot be undone.')) return;
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', getUploadUrl(), true);
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.onload = function() {
+    try {
+      var d = JSON.parse(xhr.responseText);
+      if (d.ok) { toast('Deleted: '+name, 'tok'); loadStorage(); }
+      else toast('Delete failed: '+(d.error||'unknown'), 'terr');
+    } catch(e) { toast('Delete failed', 'terr'); }
+  };
+  xhr.onerror = function(){ toast('Network error', 'terr'); };
+  xhr.send(JSON.stringify({action:'delete', file:name, password:PASS}));
+}
+
+function handleFileSelect(files) {
+  if (!files || !files.length) return;
+  uploadFiles(Array.from(files));
+}
+
+function uploadFiles(files) {
+  if (!files.length) { loadStorage(); return; }
+  if (uploading) { toast('Already uploading, please wait', 'tinf'); return; }
+  uploading = true;
+  var idx = 0;
+  function next() {
+    if (idx >= files.length) {
+      uploading = false;
+      document.getElementById('upload-progress').style.display = 'none';
+      toast('All files uploaded!', 'tok');
+      loadStorage();
+      return;
+    }
+    var file = files[idx++];
+    uploadOneFile(file, function(){ next(); }, function(err){ toast('Failed: '+file.name+' &mdash; '+(err||'error'), 'terr'); next(); });
+  }
+  next();
+}
+
+function uploadOneFile(file, onDone, onFail) {
+  var prog = document.getElementById('upload-progress');
+  var fill = document.getElementById('up-fill');
+  var pct  = document.getElementById('up-pct');
+  var nm   = document.getElementById('up-name');
+  prog.style.display = 'block';
+  nm.textContent     = 'Uploading: ' + file.name;
+  fill.style.width   = '0%';
+  pct.textContent    = '0%';
+
+  var fd = new FormData();
+  fd.append('action',   'upload');
+  fd.append('password', PASS);
+  fd.append('file',     file);
+
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', getUploadUrl(), true);
+  xhr.upload.onprogress = function(e) {
+    if (e.lengthComputable) {
+      var p = Math.round(e.loaded / e.total * 100);
+      fill.style.width = p + '%';
+      pct.textContent  = p + '%';
+    }
+  };
+  xhr.onload = function() {
+    try {
+      var d = JSON.parse(xhr.responseText);
+      if (d.ok) { onDone(d); }
+      else { onFail(d.error||'Upload rejected'); }
+    } catch(e) { onFail('Server error'); }
+  };
+  xhr.onerror = function(){ onFail('Network error'); };
+  xhr.send(fd);
+}
+
+// Drag & drop
+(function() {
+  var dz = document.getElementById('drop-zone');
+  if (!dz) return;
+  dz.addEventListener('dragover', function(e){ e.preventDefault(); dz.classList.add('drag'); });
+  dz.addEventListener('dragleave', function(){ dz.classList.remove('drag'); });
+  dz.addEventListener('drop', function(e) {
+    e.preventDefault(); dz.classList.remove('drag');
+    var files = e.dataTransfer.files;
+    if (files.length) uploadFiles(Array.from(files));
+  });
+})();
+
 
 // ── Init ──────────────────────────────────────────────────────
 // Auto-login if password stored
