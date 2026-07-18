@@ -619,7 +619,7 @@ function openModal(title, fields, onSave, saveLbl) {
   document.getElementById('modal-title').textContent = title;
   document.getElementById('modal-body').innerHTML =
     fields.map(function(f){
-      return '<div class="frow"><label class="flbl">'+esc(f.lbl)+'</label><input class="finp" id="'+esc(f.id)+'" value="'+esc(f.val||')'+'"/></div>';
+      return '<div class="frow"><label class="flbl">'+esc(f.lbl)+'</label><input class="finp" id="'+esc(f.id)+'" value="'+esc(f.val||'')+'"/></div>';
     }).join('') +
     '<div class="frow-btns">'+
     '<button class="btn" onclick="modalSave()">'+esc(saveLbl||'Save')+'</button>'+
