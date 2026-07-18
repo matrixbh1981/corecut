@@ -301,26 +301,46 @@ tr:hover td{background:rgba(124,58,237,.04)}
   <!-- STORAGE -->
   <div class="page" id="page-storage">
     <div class="page-title">Storage</div>
-    <div class="page-sub">Upload and manage files — videos, images, audio, documents</div>
+    <div class="page-sub">Upload &amp; manage files. Files saved to Google Drive via n8n &mdash; no PHP needed.</div>
+
+    <!-- Upload row -->
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap">
+      <select class="finp" id="folder-select" style="width:150px;padding:7px 10px">
+        <option value="general">general</option>
+        <option value="videos">videos</option>
+        <option value="images">images</option>
+        <option value="audio">audio</option>
+        <option value="documents">documents</option>
+      </select>
+      <label style="font-size:11px;color:var(--mu)">Folder</label>
+      <button class="btn" onclick="document.getElementById('file-input').click()">&#8679; Upload Files</button>
+      <input type="file" id="file-input" multiple style="display:none" onchange="handleFileSelect(this.files)"/>
+    </div>
 
     <!-- Drop Zone -->
     <div class="drop-zone" id="drop-zone">
       <div class="drop-zone-ic">&#128230;</div>
       <div class="drop-zone-txt">Drag &amp; drop files here</div>
-      <div class="drop-zone-sub">Or click to browse &mdash; max 100 MB per file</div>
-      <input type="file" id="file-input" multiple onchange="handleFileSelect(this.files)"/>
+      <div class="drop-zone-sub">Or click Upload above &mdash; files stored in Google Drive via n8n</div>
     </div>
 
     <!-- Toolbar -->
     <div class="storage-toolbar">
-      <button class="btn" onclick="document.getElementById('file-input').click()">&#8679; Upload Files</button>
       <button class="btn2" onclick="loadStorage()">&#8635; Refresh</button>
-      <input class="tbl-search" id="storage-search" placeholder="Search files&#8230;" oninput="filterStorage(this.value)" style="width:200px"/>
+      <select class="finp" id="folder-filter" style="width:140px;padding:6px 8px;font-size:12px" onchange="loadStorage()">
+        <option value="">All folders</option>
+        <option value="general">general</option>
+        <option value="videos">videos</option>
+        <option value="images">images</option>
+        <option value="audio">audio</option>
+        <option value="documents">documents</option>
+      </select>
+      <input class="tbl-search" id="storage-search" placeholder="Search files&#8230;" oninput="filterStorage(this.value)" style="width:180px"/>
       <div class="view-toggle">
         <button class="view-btn on" id="view-grid-btn" onclick="setStorageView('grid')" title="Grid view">&#9783;</button>
         <button class="view-btn" id="view-list-btn" onclick="setStorageView('list')" title="List view">&#9776;</button>
       </div>
-      <div class="storage-stats" id="storage-stats">Loading&hellip;</div>
+      <div class="storage-stats" id="storage-stats"></div>
     </div>
 
     <!-- Upload progress -->
@@ -331,23 +351,14 @@ tr:hover td{background:rgba(124,58,237,.04)}
     </div>
 
     <!-- Grid view -->
-    <div class="file-grid" id="storage-grid"></div>
+    <div class="file-grid" id="storage-grid"><div class="loading">Loading&hellip;</div></div>
 
     <!-- List view -->
     <div class="tbl-wrap" id="storage-list-wrap" style="display:none">
       <div style="overflow-x:auto"><table>
-        <thead><tr><th>File</th><th>Type</th><th>Size</th><th>Uploaded</th><th>URL</th><th>Actions</th></tr></thead>
+        <thead><tr><th>File</th><th>Folder</th><th>Type</th><th>Size</th><th>Uploaded</th><th>Actions</th></tr></thead>
         <tbody id="storage-list-tbody"></tbody>
       </table></div>
-    </div>
-
-    <!-- PHP URL config -->
-    <div style="margin-top:20px;padding:14px 16px;background:var(--s1);border:1px solid var(--bd);border-radius:10px">
-      <div style="font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;margin-bottom:8px">Upload PHP Endpoint</div>
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-        <input class="finp" id="upload-url" value="https://corecut.matrixland.net/admin/upload.php" style="flex:1;min-width:200px"/>
-        <div style="font-size:11px;color:var(--mu)">Upload <code style="color:var(--al)">admin/upload.php</code> to Hostinger to enable storage</div>
-      </div>
     </div>
   </div>
 
@@ -736,35 +747,44 @@ function statusBadge(s) {
   return '<span class="badge '+cls+'">'+esc(s||'draft')+'</span>';
 }
 
-// ── Storage ───────────────────────────────────────────────────
+// -- Storage (powered by n8n webhooks + Google Drive) ---------
 var storageFiles = [];
 var storageView  = 'grid';
 var uploading    = false;
 
-function getUploadUrl() {
-  return (document.getElementById('upload-url')||{value:'https://corecut.matrixland.net/admin/upload.php'}).value
-      || 'https://corecut.matrixland.net/admin/upload.php';
-}
+var N8N_UPLOAD = 'https://matrixbh.app.n8n.cloud/webhook/app-storage-upload';
+var N8N_LIST   = 'https://matrixbh.app.n8n.cloud/webhook/app-storage-list';
+var N8N_DELETE = 'https://matrixbh.app.n8n.cloud/webhook/app-storage-delete';
 
 function loadStorage() {
-  document.getElementById('storage-grid').innerHTML = '<div class="loading">Loading&hellip;</div>';
-  document.getElementById('storage-list-tbody').innerHTML = '<tr><td colspan="6" class="loading">Loading&hellip;</td></tr>';
+  document.getElementById('storage-grid').innerHTML = '<div class="loading">Loading...</div>';
+  document.getElementById('storage-list-tbody').innerHTML = '<tr><td colspan="6" class="loading">Loading...</td></tr>';
+  var folder = (document.getElementById('folder-filter')||{}).value || '';
+  var url = N8N_LIST + (folder ? '?folder=' + encodeURIComponent(folder) : '');
   var xhr = new XMLHttpRequest();
-  xhr.open('POST', getUploadUrl(), true);
-  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.open('GET', url, true);
   xhr.onload = function() {
-    try { var d = JSON.parse(xhr.responseText); storageFiles = d.files||[]; renderStorage(); updateStorageStats(); }
-    catch(e) { storageGrid('<div class="empty">Cannot connect to upload.php &mdash; upload it to Hostinger first</div>'); }
+    try {
+      var d = JSON.parse(xhr.responseText);
+      storageFiles = d.files || [];
+      renderStorage();
+      updateStorageStats();
+    } catch(e) {
+      document.getElementById('storage-grid').innerHTML = '<div class="empty">Could not load files - check n8n workflow is active</div>';
+    }
   };
-  xhr.onerror = function() { storageGrid('<div class="empty">Network error &mdash; check upload.php is uploaded</div>'); };
-  xhr.send(JSON.stringify({action:'list', password: PASS}));
+  xhr.onerror = function() {
+    document.getElementById('storage-grid').innerHTML = '<div class="empty">Network error loading files</div>';
+  };
+  xhr.send();
 }
 
 function updateStorageStats() {
-  var total = storageFiles.reduce(function(a,f){ return a + (f.size||0); }, 0);
-  document.getElementById('storage-stats').textContent =
-    storageFiles.length + ' file' + (storageFiles.length!==1?'s':'') + ' &bull; ' + formatSize(total);
-  document.getElementById('st-storage').textContent = storageFiles.length;
+  var total = storageFiles.reduce(function(a,f){ return a + (Number(f.size)||0); }, 0);
+  var el = document.getElementById('storage-stats');
+  if (el) el.textContent = storageFiles.length + ' file' + (storageFiles.length!==1?'s':'') + ' - ' + formatSize(total);
+  var st = document.getElementById('st-storage');
+  if (st) st.textContent = storageFiles.length;
 }
 
 function renderStorage(list) {
@@ -774,52 +794,53 @@ function renderStorage(list) {
 }
 
 function renderStorageGrid(files) {
-  if (!files.length) { storageGrid('<div class="empty">No files uploaded yet</div>'); return; }
-  var html = files.map(function(f){ return fileCard(f); }).join('');
-  storageGrid(html);
-}
-function storageGrid(html) {
-  document.getElementById('storage-grid').innerHTML = html;
+  if (!files.length) {
+    document.getElementById('storage-grid').innerHTML = '<div class="empty">No files uploaded yet</div>';
+    return;
+  }
+  document.getElementById('storage-grid').innerHTML = files.map(fileCard).join('');
 }
 
 function renderStorageList(files) {
+  var tbody = document.getElementById('storage-list-tbody');
   if (!files.length) {
-    document.getElementById('storage-list-tbody').innerHTML = '<tr><td colspan="6" class="empty">No files uploaded yet</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" class="empty">No files uploaded yet</td></tr>';
     return;
   }
-  document.getElementById('storage-list-tbody').innerHTML = files.map(function(f){
-    var date = f.time ? new Date(f.time*1000).toLocaleDateString() : '';
+  tbody.innerHTML = files.map(function(f){
+    var date = f.uploaded_at ? f.uploaded_at.substring(0,10) : '';
+    var fileId = escJ(f.file_id || f.name || '');
     return '<tr>'+
-      '<td style="font-family:monospace;font-size:11px">'+esc(f.name)+'</td>'+
+      '<td style="font-family:monospace;font-size:11px" title="'+esc(f.name)+'">'+esc((f.name||'').substring(0,36))+'</td>'+
+      '<td>'+esc(f.folder||'general')+'</td>'+
       '<td>'+esc(mimeLabel(f.mime))+'</td>'+
-      '<td>'+formatSize(f.size)+'</td>'+
+      '<td>'+formatSize(Number(f.size)||0)+'</td>'+
       '<td>'+date+'</td>'+
-      '<td><a href="'+esc(f.url)+'" target="_blank" style="color:var(--al);font-size:11px">'+esc(f.url)+'</a></td>'+
       '<td><div class="act">'+
         '<button class="ab" onclick="copyUrl(\''+escJ(f.url)+'\')" title="Copy URL">Copy</button>'+
-        '<button class="ab del" onclick="deleteStorageFile(\''+escJ(f.name)+'\')" title="Delete">Del</button>'+
+        '<a class="ab" href="'+esc(f.url)+'" target="_blank">Open</a>'+
+        '<button class="ab del" onclick="deleteStorageFile(\''+fileId+'\')" title="Delete">Del</button>'+
       '</div></td>'+
       '</tr>';
   }).join('');
 }
 
 function fileCard(f) {
-  var thumb = '';
-  if (f.mime && f.mime.startsWith('image/')) {
-    thumb = '<img class="file-thumb" src="'+esc(f.url)+'" loading="lazy" onerror="this.style.display=\'none\'"/>';
-  } else {
-    thumb = '<div class="file-thumb-ic">'+mimeIcon(f.mime)+'</div>';
-  }
-  var date = f.time ? new Date(f.time*1000).toLocaleDateString() : '';
-  return '<div class="file-card" data-name="'+esc(f.name)+'" data-url="'+esc(f.url)+'">'+
+  var isImg = f.mime && f.mime.startsWith('image/');
+  var thumb = isImg
+    ? '<img class="file-thumb" src="'+esc(f.url)+'" loading="lazy" onerror="this.style.display=\'none\'"/>'
+    : '<div class="file-thumb-ic">'+mimeIcon(f.mime)+'</div>';
+  var date = f.uploaded_at ? f.uploaded_at.substring(0,10) : '';
+  var fileId = escJ(f.file_id || f.name || '');
+  return '<div class="file-card">'+
     thumb+
     '<div class="file-card-actions">'+
       '<button class="file-card-btn" onclick="copyUrl(\''+escJ(f.url)+'\')" title="Copy URL">Copy</button>'+
-      '<button class="file-card-btn del" onclick="deleteStorageFile(\''+escJ(f.name)+'\')" title="Delete">&#128465;</button>'+
+      '<button class="file-card-btn del" onclick="deleteStorageFile(\''+fileId+'\')" title="Delete">Del</button>'+
     '</div>'+
     '<div class="file-card-info">'+
-      '<div class="file-card-name" title="'+esc(f.name)+'">'+esc(f.name)+'</div>'+
-      '<div class="file-card-meta">'+formatSize(f.size)+' &bull; '+date+'</div>'+
+      '<div class="file-card-name" title="'+esc(f.name)+'">'+esc((f.name||'').substring(0,28))+'</div>'+
+      '<div class="file-card-meta">'+formatSize(Number(f.size)||0)+' - '+esc(f.folder||'general')+' - '+date+'</div>'+
     '</div>'+
     '</div>';
 }
@@ -830,7 +851,7 @@ function mimeIcon(mime) {
   if (mime.startsWith('video/'))  return '&#127916;';
   if (mime.startsWith('audio/'))  return '&#127925;';
   if (mime.includes('pdf'))       return '&#128209;';
-  if (mime.includes('zip') || mime.includes('compressed')) return '&#128230;';
+  if (mime.includes('zip'))       return '&#128230;';
   return '&#128196;';
 }
 function mimeLabel(mime) {
@@ -854,11 +875,12 @@ function setStorageView(v) {
 
 function filterStorage(q) {
   q = q.toLowerCase();
-  var filtered = q ? storageFiles.filter(function(f){ return f.name.toLowerCase().indexOf(q)>=0; }) : storageFiles;
+  var filtered = q ? storageFiles.filter(function(f){ return (f.name||'').toLowerCase().indexOf(q)>=0; }) : storageFiles;
   renderStorage(filtered);
 }
 
 function copyUrl(url) {
+  if (!url) { toast('No URL', 'terr'); return; }
   if (navigator.clipboard) {
     navigator.clipboard.writeText(url).then(function(){ toast('URL copied!', 'tok'); });
   } else {
@@ -869,20 +891,21 @@ function copyUrl(url) {
   }
 }
 
-function deleteStorageFile(name) {
-  if (!confirm('Delete ' + name + '? This cannot be undone.')) return;
+function deleteStorageFile(fileId) {
+  if (!fileId) { toast('Missing file ID', 'terr'); return; }
+  if (!confirm('Delete this file from Google Drive? This cannot be undone.')) return;
   var xhr = new XMLHttpRequest();
-  xhr.open('POST', getUploadUrl(), true);
+  xhr.open('POST', N8N_DELETE, true);
   xhr.setRequestHeader('Content-Type', 'application/json');
   xhr.onload = function() {
     try {
       var d = JSON.parse(xhr.responseText);
-      if (d.ok) { toast('Deleted: '+name, 'tok'); loadStorage(); }
+      if (d.success) { toast('File deleted', 'tok'); loadStorage(); }
       else toast('Delete failed: '+(d.error||'unknown'), 'terr');
     } catch(e) { toast('Delete failed', 'terr'); }
   };
   xhr.onerror = function(){ toast('Network error', 'terr'); };
-  xhr.send(JSON.stringify({action:'delete', file:name, password:PASS}));
+  xhr.send(JSON.stringify({ file_id: fileId }));
 }
 
 function handleFileSelect(files) {
@@ -895,6 +918,7 @@ function uploadFiles(files) {
   if (uploading) { toast('Already uploading, please wait', 'tinf'); return; }
   uploading = true;
   var idx = 0;
+  var folder = (document.getElementById('folder-select')||{value:'general'}).value || 'general';
   function next() {
     if (idx >= files.length) {
       uploading = false;
@@ -904,12 +928,14 @@ function uploadFiles(files) {
       return;
     }
     var file = files[idx++];
-    uploadOneFile(file, function(){ next(); }, function(err){ toast('Failed: '+file.name+' &mdash; '+(err||'error'), 'terr'); next(); });
+    uploadOneFile(file, folder, function(){ next(); }, function(err){
+      toast('Failed: ' + file.name + ' - ' + (err||'error'), 'terr'); next();
+    });
   }
   next();
 }
 
-function uploadOneFile(file, onDone, onFail) {
+function uploadOneFile(file, folder, onDone, onFail) {
   var prog = document.getElementById('upload-progress');
   var fill = document.getElementById('up-fill');
   var pct  = document.getElementById('up-pct');
@@ -920,12 +946,11 @@ function uploadOneFile(file, onDone, onFail) {
   pct.textContent    = '0%';
 
   var fd = new FormData();
-  fd.append('action',   'upload');
-  fd.append('password', PASS);
-  fd.append('file',     file);
+  fd.append('folder', folder || 'general');
+  fd.append('file',   file);
 
   var xhr = new XMLHttpRequest();
-  xhr.open('POST', getUploadUrl(), true);
+  xhr.open('POST', N8N_UPLOAD, true);
   xhr.upload.onprogress = function(e) {
     if (e.lengthComputable) {
       var p = Math.round(e.loaded / e.total * 100);
@@ -936,18 +961,19 @@ function uploadOneFile(file, onDone, onFail) {
   xhr.onload = function() {
     try {
       var d = JSON.parse(xhr.responseText);
-      if (d.ok) { onDone(d); }
-      else { onFail(d.error||'Upload rejected'); }
-    } catch(e) { onFail('Server error'); }
+      if (d.success) { onDone(d); }
+      else { onFail(d.error || 'Upload rejected'); }
+    } catch(e) { onFail('Server error: ' + xhr.responseText.substring(0,80)); }
   };
   xhr.onerror = function(){ onFail('Network error'); };
   xhr.send(fd);
 }
 
-// Drag & drop
+// Drag & drop on drop-zone
 (function() {
   var dz = document.getElementById('drop-zone');
   if (!dz) return;
+  dz.addEventListener('click', function(){ document.getElementById('file-input').click(); });
   dz.addEventListener('dragover', function(e){ e.preventDefault(); dz.classList.add('drag'); });
   dz.addEventListener('dragleave', function(){ dz.classList.remove('drag'); });
   dz.addEventListener('drop', function(e) {
